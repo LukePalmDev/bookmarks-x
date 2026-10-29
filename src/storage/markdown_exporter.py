@@ -123,3 +123,14 @@ data_creazione: "{created_at}"
             f.write(content)
 
         return file_path
+
+    def delete_bookmark_file(self, tweet_id: str) -> bool:
+        """Elimina il file Markdown associato al bookmark dall'archivio locale."""
+        deleted = False
+        for fp in self.archive_dir.glob(f"*_{tweet_id}.md"):
+            try:
+                fp.unlink()
+                deleted = True
+            except Exception:
+                pass
+        return deleted

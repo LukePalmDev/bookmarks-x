@@ -323,6 +323,81 @@ def cmd_set_telegram(token: Optional[str] = None, chat_id: Optional[str] = None)
         console.print(f"[yellow]⚠️ Test di connessione:[/yellow] {info}")
 
 
+async def cmd_mirror():
+    """Esegue il mirroring bidirezionale (Opzione B): elimina i post rimossi da X."""
+    print_header()
+    sync_service = SyncService()
+
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        TaskProgressColumn(),
+        console=console,
+    ) as progress:
+        task_id = progress.add_task("Avvio sincronizzazione a specchio (Mirroring)...", total=100)
+
+        def on_progress(desc: str, current: int, total: int):
+            if total > 0:
+                progress.update(task_id, description=f"{desc} ({current}/{total})", completed=(current / total) * 100)
+            else:
+                progress.update(task_id, description=f"{desc} ({current})")
+
+        stats = await sync_service.run_mirror(progress_callback=on_progress)
+        progress.update(task_id, description="Mirroring completato!", completed=100)
+
+    table = Table(title="Riepilogo Mirroring a Specchio", border_style="cyan")
+    table.add_column("Operazione", style="bold")
+    table.add_column("Risultato", justify="right")
+
+    table.add_row("Segnalibri attuali su X", str(stats["fetched_from_x"]))
+    table.add_row("Nuovi post aggiunti", f"[green]{stats['new_saved']}[/green]")
+    table.add_row("Post rimossi (non più su X)", f"[red]{stats['deleted_removed']}[/red]")
+    table.add_row("Media scaricati", str(stats["media_downloaded"]))
+    table.add_row("Post analizzati", str(stats["analyzed"]))
+    table.add_row("Totale post nel database", str(stats["total_in_db"]))
+
+    console.print(table)
+    console.print("\n[green]✓[/green] Archivio locale e sito web GitHub Pages sincronizzati a specchio con X.")
+
+
+def cmd_remove(target: str):
+    """Rimuove manualmente un singolo post da DB, media, markdown e sito."""
+    print_header()
+    tweet_id = target.strip().rstrip("/").split("/")[-1]
+    sync_service = SyncService()
+    item = sync_service.db.get_bookmark(tweet_id)
+    if not item:
+        console.print(f"[red]Errore:[/red] Nessun post trovato con ID '{tweet_id}' nel database locale.")
+        return
+
+    author = item.get("gemini_author") or item.get("author_screen_name", "unknown")
+    title = item.get("gemini_title") or item.get("tweet_text", "")[:40]
+    ok = sync_service.delete_bookmark_fully(tweet_id)
+    if ok:
+        from src.service.sync_service import sync_site_to_git
+        from src.storage.site_generator import export_site_data, generate_index_html
+        export_site_data(sync_service.db)
+        generate_index_html()
+        sync_site_to_git(f"Rimosso post {tweet_id}")
+        console.print(f"[green]✓ Post rimosso con successo![/green] ({author}: '{title}')")
+        console.print("[dim]File media, scheda markdown e record database eliminati. Sito aggiornato.[/dim]")
+    else:
+        console.print(f"[red]Errore durante l'eliminazione del post {tweet_id}.[/red]")
+
+
+def cmd_build_site():
+    """Rigenera i dati del sito web e invia a GitHub Pages."""
+    print_header()
+    from src.service.sync_service import sync_site_to_git
+    from src.storage.site_generator import export_site_data, generate_index_html
+    db = Database()
+    export_site_data(db)
+    generate_index_html()
+    sync_site_to_git("Rigenerazione manuale sito web Bookmarks-X")
+    console.print("[green]✓ Sito web e bookmarks.json rigenerati e aggiornati su GitHub Pages.[/green]")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="X-Gemini Bookmarks: Sincronizzazione automatica e analisi AI dei segnalibri X."
@@ -361,6 +436,16 @@ def main():
     tg_p.add_argument("--token", help="Nuovo token del bot Telegram (da @BotFather)")
     tg_p.add_argument("--chat-id", help="Chat ID o ID del canale Telegram")
 
+    # mirror (Opzione B)
+    subparsers.add_parser("mirror", help="Sincronizzazione a specchio: elimina dall'archivio e dal sito i post rimossi su X")
+
+    # remove
+    rem_p = subparsers.add_parser("remove", help="Rimuove manualmente un post per ID o URL")
+    rem_p.add_argument("target", help="ID del post o URL completo di X")
+
+    # build-site
+    subparsers.add_parser("build-site", help="Rigenera il sito web per GitHub Pages e invia su GitHub")
+
     args = parser.parse_args()
 
     if not args.command:
@@ -369,6 +454,12 @@ def main():
 
     if args.command == "sync":
         asyncio.run(cmd_sync(fetch_all=args.all))
+    elif args.command == "mirror":
+        asyncio.run(cmd_mirror())
+    elif args.command == "remove":
+        cmd_remove(args.target)
+    elif args.command == "build-site":
+        cmd_build_site()
     elif args.command == "watch":
         asyncio.run(cmd_watch(interval=args.interval))
     elif args.command == "list":

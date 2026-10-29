@@ -179,6 +179,21 @@ class Database:
                 )
             return [dict(row) for row in cur.fetchall()]
 
+    def get_all_tweet_ids(self) -> List[str]:
+        """Restituisce l'elenco di tutti gli ID dei tweet presenti nel database."""
+        with self._get_connection() as conn:
+            cur = conn.execute("SELECT tweet_id FROM bookmarks;")
+            return [str(row["tweet_id"]) for row in cur.fetchall()]
+
+    def delete_bookmark(self, tweet_id: str) -> Optional[Dict[str, Any]]:
+        """Elimina un segnalibro dal database e restituisce i dati del record eliminato."""
+        item = self.get_bookmark(tweet_id)
+        if not item:
+            return None
+        with self._get_connection() as conn:
+            conn.execute("DELETE FROM bookmarks WHERE tweet_id = ?;", (tweet_id,))
+        return item
+
     def get_stats(self) -> Dict[str, int]:
         """Restituisce le statistiche attuali del database."""
         with self._get_connection() as conn:

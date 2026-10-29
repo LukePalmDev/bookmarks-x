@@ -1,19 +1,47 @@
 """Generatore del sito web statico ottimizzato per mobile (iPhone 13 mini) e GitHub Pages."""
 
 import json
+from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 from src.config import BASE_DIR, config
 from src.storage.db import Database
 
 DOCS_DIR = BASE_DIR / "docs"
+IT_MONTHS = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"]
+
+
+def parse_tweet_date_and_ts(created_at_raw: str, tweet_id: str) -> Tuple[int, str]:
+    """Calcola il timestamp Unix e formatta la data in italiano (es. '28 Ott 2026')."""
+    # 1. Prova parsing stringa data X standard (es. 'Wed Oct 28 10:17:05 +0000 2026')
+    if created_at_raw:
+        try:
+            dt = datetime.strptime(created_at_raw, "%a %b %d %H:%M:%S %z %Y")
+            ts = int(dt.timestamp())
+            date_str = f"{dt.day} {IT_MONTHS[dt.month - 1]} {dt.year}"
+            return ts, date_str
+        except Exception:
+            pass
+
+    # 2. Fallback Snowflake ID di Twitter (64-bit int dove i bit alti sono millisecondi da Twitter epoch)
+    try:
+        tid = int(tweet_id)
+        snowflake_ms = (tid >> 22) + 1288834974657
+        dt = datetime.fromtimestamp(snowflake_ms / 1000)
+        ts = int(dt.timestamp())
+        date_str = f"{dt.day} {IT_MONTHS[dt.month - 1]} {dt.year}"
+        return ts, date_str
+    except Exception:
+        pass
+
+    return 0, created_at_raw[:10] if created_at_raw else "Data sconosciuta"
 
 
 def export_site_data(db: Database) -> Path:
     """Esporta tutti i bookmark analizzati in un file JSON per l'app web."""
     DOCS_DIR.mkdir(parents=True, exist_ok=True)
-    bookmarks = db.get_recent_bookmarks(limit=500)
+    bookmarks = db.get_recent_bookmarks(limit=1000)
 
     site_items = []
     for b in bookmarks:
@@ -34,6 +62,8 @@ def export_site_data(db: Database) -> Path:
             except Exception:
                 media_urls = []
 
+        ts, date_str = parse_tweet_date_and_ts(b.get("created_at") or "", b["tweet_id"])
+
         site_items.append({
             "id": b["tweet_id"],
             "title": analysis.get("titolo") or b.get("gemini_title") or b.get("tweet_text", "")[:60],
@@ -45,11 +75,15 @@ def export_site_data(db: Database) -> Path:
             "use_case": analysis.get("caso_d_uso", ""),
             "tags": analysis.get("tag", []),
             "url": b.get("tweet_url", f"https://x.com/i/web/status/{b['tweet_id']}"),
-            "date": (b.get("created_at") or "")[:10],
+            "date": date_str,
+            "timestamp": ts,
             "text": b.get("tweet_text", ""),
             "media": media_urls[:2],
             "status": b.get("status", "pending"),
         })
+
+    # Ordina di default dal più recente al più vecchio (timestamp decrescente)
+    site_items.sort(key=lambda x: x.get("timestamp", 0), reverse=True)
 
     json_path = DOCS_DIR / "bookmarks.json"
     with open(json_path, "w", encoding="utf-8") as f:
@@ -145,10 +179,43 @@ def generate_index_html() -> Path:
       letter-spacing: -0.02em;
     }
 
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sort-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: 12px;
+      background: #1c1c1e;
+      border: 1px solid #2c2c2e;
+      color: #f5f5f7;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+
+    .sort-btn:active {
+      transform: scale(0.94);
+      background: #2a2a2d;
+    }
+
+    .sort-icon {
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
     .count-badge {
       font-size: 12px;
       font-weight: 600;
-      padding: 3px 8px;
+      padding: 4px 8px;
       border-radius: 12px;
       background: var(--card-border);
       color: var(--accent);
@@ -436,7 +503,13 @@ def generate_index_html() -> Path:
         <span class="brand-icon">🔖</span>
         <span class="brand-title">Bookmarks-X</span>
       </div>
-      <div class="count-badge" id="totalCount">0 post</div>
+      <div class="header-actions">
+        <button class="sort-btn" id="sortToggleBtn" onclick="toggleSort()" title="Inverti ordine cronologico">
+          <span class="sort-icon" id="sortIcon">↓</span>
+          <span class="sort-label" id="sortLabel">Recenti</span>
+        </button>
+        <div class="count-badge" id="totalCount">0 post</div>
+      </div>
     </div>
     <div class="search-box">
       <span class="search-icon">🔍</span>
@@ -463,6 +536,21 @@ def generate_index_html() -> Path:
   <script>
     let allBookmarks = [];
     let currentCategory = 'all';
+    let sortOrder = 'desc'; // 'desc' = più recenti prima, 'asc' = meno recenti prima
+
+    function toggleSort() {
+      sortOrder = (sortOrder === 'desc') ? 'asc' : 'desc';
+      const icon = document.getElementById('sortIcon');
+      const label = document.getElementById('sortLabel');
+      if (sortOrder === 'desc') {
+        icon.textContent = '↓';
+        label.textContent = 'Recenti';
+      } else {
+        icon.textContent = '↑';
+        label.textContent = 'Meno recenti';
+      }
+      renderFeed();
+    }
 
     async function loadBookmarks() {
       try {
@@ -489,6 +577,13 @@ def generate_index_html() -> Path:
         return matchesCat && matchesSearch;
       });
 
+      // Ordinamento cronologico dinamico
+      filtered.sort((a, b) => {
+        const tsA = a.timestamp || 0;
+        const tsB = b.timestamp || 0;
+        return sortOrder === 'desc' ? (tsB - tsA) : (tsA - tsB);
+      });
+
       document.getElementById('totalCount').innerText = `${filtered.length} post`;
 
       if (filtered.length === 0) {
@@ -513,7 +608,7 @@ def generate_index_html() -> Path:
           <article class="card">
             <div class="card-meta">
               <span class="card-cat">${escapeHtml(item.category || '📌 Risorsa')}</span>
-              <span class="card-date">${escapeHtml(item.date || '')}</span>
+              <span class="card-date">📅 ${escapeHtml(item.date || '')}</span>
             </div>
 
             <h2 class="card-title">${escapeHtml(item.title)}</h2>

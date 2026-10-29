@@ -69,3 +69,27 @@ class MediaDownloader:
                     saved_paths.append(str(path))
 
         return saved_paths
+
+    def delete_tweet_media(self, tweet_id: str, paths: List[str] | None = None) -> int:
+        """Rimuove fisicamente dal disco i media scaricati per un tweet."""
+        deleted = 0
+        if paths:
+            for p in paths:
+                try:
+                    fp = Path(p)
+                    if fp.exists():
+                        fp.unlink()
+                        deleted += 1
+                except Exception:
+                    pass
+
+        # Pulizia di sicurezza basata sul prefisso tweet_id
+        for fp in self.media_dir.glob(f"{tweet_id}_*"):
+            try:
+                if fp.exists():
+                    fp.unlink()
+                    deleted += 1
+            except Exception:
+                pass
+
+        return deleted

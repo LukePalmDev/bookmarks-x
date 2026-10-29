@@ -222,15 +222,18 @@ class XBookmarksClient:
         self,
         progress_callback: Optional[Callable[[int], None]] = None,
         max_total: Optional[int] = None,
-    ) -> List[Dict[str, Any]]:
-        """Scarica l'intero storico dei segnalibri salvati effettuando paginazione completa."""
+    ) -> Tuple[List[Dict[str, Any]], bool]:
+        """Scarica l'intero storico dei segnalibri salvati effettuando paginazione completa.
+        Ritorna (all_tweets, is_complete)."""
         all_tweets: List[Dict[str, Any]] = []
         seen_ids = set()
         cursor: Optional[str] = None
+        is_complete = False
 
         while True:
             tweets, bottom_cursor, _ = await self.fetch_page(cursor=cursor, count=config.x_batch_size)
             if not tweets:
+                is_complete = True
                 break
 
             new_in_page = 0
@@ -246,12 +249,14 @@ class XBookmarksClient:
 
             if max_total and len(all_tweets) >= max_total:
                 all_tweets = all_tweets[:max_total]
+                is_complete = False
                 break
 
             # Se non ci sono nuovi tweet o il cursore non avanza, siamo alla fine
             if new_in_page == 0 or not bottom_cursor or bottom_cursor == cursor:
+                is_complete = True
                 break
 
             cursor = bottom_cursor
 
-        return all_tweets
+        return all_tweets, is_complete
