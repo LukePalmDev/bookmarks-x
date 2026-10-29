@@ -131,6 +131,13 @@ class SyncService:
         stats["analyzer_configured"] = can_analyze
         stats["pending_analysis"] = len(self.db.get_pending_analysis())
 
+        # Aggiorna i dati per l'app web mobile GitHub Pages
+        try:
+            from src.storage.site_generator import export_site_data
+            export_site_data(self.db)
+        except Exception as e:
+            logger.warning(f"Errore aggiornamento dati sito web: {e}")
+
         return stats
 
     async def run_watch_loop(
