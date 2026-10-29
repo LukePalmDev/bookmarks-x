@@ -299,6 +299,94 @@ class SyncService:
 
         return stats
 
+    async def reanalyze_all(
+        self,
+        force_all: bool = False,
+        concurrency: int = 3,
+        progress_callback: Optional[Callable[[str, int, int], None]] = None,
+    ) -> Dict[str, Any]:
+        """Ricontrolla e ri-analizza tutti i post per assicurare che contengano tutti i punti salienti:
+        - Autore
+        - Titolo
+        - Categoria (tra le 6 concordate)
+        - Il Succo (TL;DR concreto)
+        - Punti Chiave (3-4 punti)
+        - Caso d'Uso
+        - Tag (3-5 hashtag)
+        """
+        with self.db._get_connection() as conn:
+            cur = conn.execute("SELECT * FROM bookmarks ORDER BY bookmarked_at DESC;")
+            all_rows = [dict(r) for r in cur.fetchall()]
+
+        targets = []
+        for r in all_rows:
+            if force_all:
+                targets.append(r)
+                continue
+            raw = r.get("gemini_analysis_json")
+            if not raw:
+                targets.append(r)
+                continue
+            try:
+                d = json.loads(raw) if isinstance(raw, str) else raw
+                punti = d.get("punti_chiave", [])
+                if not punti or len(punti) == 0 or not d.get("il_succo") or not d.get("categoria"):
+                    targets.append(r)
+            except Exception:
+                targets.append(r)
+
+        stats = {
+            "total_in_db": len(all_rows),
+            "target_count": len(targets),
+            "completed": 0,
+            "errors": 0,
+        }
+
+        if not targets:
+            return stats
+
+        sem = asyncio.Semaphore(concurrency)
+        lock = asyncio.Lock()
+
+        async def worker(item: Dict[str, Any]):
+            t_id = item["tweet_id"]
+            async with sem:
+                try:
+                    res = await asyncio.to_thread(self.analyzer.analyze_tweet, item)
+                    author = res.get("autore", item.get("author_screen_name", ""))
+                    title = res.get("titolo", "Post X")
+
+                    async with lock:
+                        self.db.update_analysis_success(t_id, author, title, res)
+                        item_up = dict(item)
+                        item_up["gemini_author"] = author
+                        item_up["gemini_title"] = title
+                        item_up["gemini_analysis_json"] = res
+                        if config.export_markdown:
+                            self.markdown_exporter.export_bookmark(item_up)
+                        stats["completed"] += 1
+                except Exception as exc:
+                    logger.warning(f"Errore reanalisi post {t_id}: {exc}")
+                    async with lock:
+                        stats["errors"] += 1
+
+                if progress_callback:
+                    progress_callback("Reanalisi post con Claude CLI", stats["completed"] + stats["errors"], len(targets))
+
+        tasks = [worker(t) for t in targets]
+        await asyncio.gather(*tasks)
+
+        # Rigenera sito e invia a GitHub
+        try:
+            from src.storage.site_generator import export_site_data, generate_index_html
+            export_site_data(self.db)
+            generate_index_html()
+            sync_site_to_git(f"Reanalisi completa: {stats['completed']} post aggiornati con tutti i punti")
+        except Exception as e:
+            logger.warning(f"Errore aggiornamento dati sito web: {e}")
+
+        return stats
+
     async def run_watch_loop(
         self,
         interval_seconds: Optional[int] = None,

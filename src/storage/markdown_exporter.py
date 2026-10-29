@@ -49,6 +49,9 @@ class MarkdownExporter:
         filename = f"{date_prefix}_{sanitize_filename(author)}_{safe_title}_{tweet_id}.md"
         file_path = self.archive_dir / filename
 
+        # Rimuove eventuale versione precedente per evitare duplicati con titoli diversi
+        self.delete_bookmark_file(tweet_id)
+
         # Formatta i media
         media_paths = bookmark.get("media_local_paths") or []
         if isinstance(media_paths, str):

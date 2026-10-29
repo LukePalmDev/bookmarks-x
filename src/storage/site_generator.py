@@ -53,15 +53,6 @@ def export_site_data(db: Database) -> Path:
             except Exception:
                 analysis = {}
 
-        # Media urls
-        media_urls = []
-        raw_media = b.get("media_urls")
-        if raw_media:
-            try:
-                media_urls = json.loads(raw_media) if isinstance(raw_media, str) else raw_media
-            except Exception:
-                media_urls = []
-
         ts, date_str = parse_tweet_date_and_ts(b.get("created_at") or "", b["tweet_id"])
 
         site_items.append({
@@ -78,7 +69,6 @@ def export_site_data(db: Database) -> Path:
             "date": date_str,
             "timestamp": ts,
             "text": b.get("tweet_text", ""),
-            "media": media_urls[:2],
             "status": b.get("status", "pending"),
         })
 
@@ -415,15 +405,6 @@ def generate_index_html() -> Path:
       border-radius: 4px;
     }
 
-    .card-media img {
-      width: 100%;
-      max-height: 220px;
-      object-fit: cover;
-      border-radius: 10px;
-      border: 0.5px solid var(--card-border);
-      margin-top: 4px;
-    }
-
     .card-actions {
       display: flex;
       align-items: center;
@@ -601,9 +582,6 @@ def generate_index_html() -> Path:
         const useCaseHtml = item.use_case ?
           `<div class="use-case-box">🎯 <b>Utile per:</b> ${escapeHtml(item.use_case)}</div>` : '';
 
-        const mediaHtml = item.media && item.media.length ?
-          `<div class="card-media"><img src="${item.media[0]}" alt="media preview" loading="lazy"></div>` : '';
-
         return `
           <article class="card">
             <div class="card-meta">
@@ -624,7 +602,6 @@ def generate_index_html() -> Path:
             ${pointsHtml}
             ${useCaseHtml}
             ${tagsHtml}
-            ${mediaHtml}
 
             <div class="card-actions">
               <a href="${item.url}" target="_blank" rel="noopener" class="btn-x">

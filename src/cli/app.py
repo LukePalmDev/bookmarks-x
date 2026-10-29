@@ -398,6 +398,48 @@ def cmd_build_site():
     console.print("[green]✓ Sito web e bookmarks.json rigenerati e aggiornati su GitHub Pages.[/green]")
 
 
+async def cmd_reanalyze(force_all: bool = False, concurrency: int = 3):
+    """Ricontrolla e ri-analizza tutti i post per assicurare che abbiano tutti i punti concordati."""
+    print_header()
+    sync_service = SyncService()
+
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        TaskProgressColumn(),
+        console=console,
+    ) as progress:
+        task_id = progress.add_task("Verifica post da rianalizzare...", total=100)
+
+        def on_progress(desc: str, current: int, total: int):
+            if total > 0:
+                progress.update(task_id, description=f"{desc} ({current}/{total})", completed=(current / total) * 100)
+            else:
+                progress.update(task_id, description=f"{desc} ({current})")
+
+        stats = await sync_service.reanalyze_all(
+            force_all=force_all,
+            concurrency=concurrency,
+            progress_callback=on_progress,
+        )
+        progress.update(task_id, description="Reanalisi completata!", completed=100)
+
+    table = Table(title="Riepilogo Reanalisi Post", border_style="cyan")
+    table.add_column("Metrica", style="bold")
+    table.add_column("Valore", justify="right")
+
+    table.add_row("Totale post nel database", str(stats["total_in_db"]))
+    table.add_row("Post che necessitavano di analisi completa", str(stats["target_count"]))
+    table.add_row("Post completati con successo", f"[green]{stats['completed']}[/green]")
+    if stats["errors"] > 0:
+        table.add_row("Errori riscontrati", f"[red]{stats['errors']}[/red]")
+
+    console.print(table)
+    console.print("\n[green]✓ Tutti i post sono stati aggiornati con titolo, categoria, succo, punti chiave, caso d'uso e tag![/green]")
+    console.print("[dim]Le schede Markdown e il sito GitHub Pages sono stati aggiornati.[/dim]")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="X-Gemini Bookmarks: Sincronizzazione automatica e analisi AI dei segnalibri X."
@@ -446,6 +488,11 @@ def main():
     # build-site
     subparsers.add_parser("build-site", help="Rigenera il sito web per GitHub Pages e invia su GitHub")
 
+    # reanalyze
+    rean_p = subparsers.add_parser("reanalyze", help="Ricontrolla e rianalizza i post con tutti i punti salienti")
+    rean_p.add_argument("--all", action="store_true", help="Forza la rianalisi di tutti i post anche se già completi")
+    rean_p.add_argument("--concurrency", type=int, default=3, help="Numero di worker paralleli per Claude CLI")
+
     args = parser.parse_args()
 
     if not args.command:
@@ -460,6 +507,8 @@ def main():
         cmd_remove(args.target)
     elif args.command == "build-site":
         cmd_build_site()
+    elif args.command == "reanalyze":
+        asyncio.run(cmd_reanalyze(force_all=args.all, concurrency=args.concurrency))
     elif args.command == "watch":
         asyncio.run(cmd_watch(interval=args.interval))
     elif args.command == "list":
