@@ -1,0 +1,40 @@
+# ====================================================================
+# Configurazione Bookmarks-X (Twitter Bookmark Sync & AI Analyzer)
+# ====================================================================
+
+engine: "claude" # Motore di analisi: 'claude' (consigliato, Claude CLI) o 'gemini'
+
+x_account:
+  cookie_source: "safari" # 'safari', 'auto', 'chrome', 'firefox', 'brave', 'edge' o 'env'
+  batch_size: 20
+
+claude:
+  # Modello predefinito per Claude CLI (come in prompt-x)
+  model: "haiku"
+  fallback_model: "sonnet"
+
+gemini:
+  model: "gemini-3.5-flash"
+  temperature: 0.2
+  max_output_tokens: 1024
+
+sync:
+  interval_seconds: 300 # Controllo ogni 5 minuti
+  download_media: true
+  export_markdown: true
+
+storage:
+  database_path: "data/bookmarks.db"
+  media_dir: "data/media"
+  archive_dir: "data/archive"
+  logs_dir: "logs"
+
+analysis:
+  language: "it"
+  mode: "basic" # Attualmente Autore e Titolo sintetico
+
+telegram:
+  enabled: true
+  bot_name: "bookmarks-x"
+  send_photos: true
+  notify_on_new_bookmark: true
