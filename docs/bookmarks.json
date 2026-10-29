@@ -1,5 +1,35 @@
 [
   {
+    "id": "2115904821136114003",
+    "title": "Surya OCR 2.5: nuovo modello OCR open sotto 1B parametri",
+    "author": "Vik Paruchuri (@VikParuchuri)",
+    "screen_name": "VikParuchuri",
+    "category": "🔬 Modelli & Ricerca",
+    "summary": "Surya OCR 2.5 è un modello OCR open source da 689M parametri che, secondo l'autore, è il più accurato sotto 1 miliardo di parametri (85,9 su OmniParseBench). Rispetto alla versione precedente è circa 1,7 volte più veloce, con 4,5 pagine al secondo su H100.",
+    "points": [
+      "Accuratezza dichiarata di 85,9 su OmniParseBench, il punteggio più alto tra i modelli OCR open sotto 1B parametri secondo l'autore",
+      "Dimensione di 689M parametri, quindi più leggero di molti modelli OCR generalisti di grandi dimensioni",
+      "Velocità di 4,5 pagine al secondo su H100, con un miglioramento di circa 1,7x rispetto a Surya 2",
+      "Utilizza una tokenizzazione a livello di carattere, una scelta architetturale rilevante per la precisione nel riconoscimento del testo"
+    ],
+    "use_case": "Utile per chi deve digitalizzare documenti, PDF o scansioni in locale o su GPU singola senza dipendere da API cloud costose, privilegiando accuratezza e throughput.",
+    "tags": [
+      "#ocr",
+      "#surya",
+      "#opensource",
+      "#computervision",
+      "#ai"
+    ],
+    "url": "https://x.com/VikParuchuri/status/2115904821136114003",
+    "date": "29 Ott 2026",
+    "timestamp": 1793305995,
+    "text": "Introducing Surya OCR 2.5!\n\n- Most accurate open OCR model under 1B params (85.9 on OmniParseBench)\n- 1.7x faster than Surya 2, 4.5 pages/s on H100\n- 689M params, with character tokenization https://t.co/IvGMPoDWEr",
+    "media": [
+      "https://pbs.twimg.com/amplify_video_thumb/2115901403642146817/img/yaxqyZLLA849mYcM.jpg"
+    ],
+    "status": "analyzed"
+  },
+  {
     "id": "2115387371281584583",
     "title": "OpenBot, OpenMuse, OpenDots e OpenDuet: alternative open source self-hosted di CopilotKit",
     "author": "Eli Berman (@eli__berman)",
