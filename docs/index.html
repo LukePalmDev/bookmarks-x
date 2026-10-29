@@ -317,15 +317,6 @@
       border-radius: 4px;
     }
 
-    .card-media img {
-      width: 100%;
-      max-height: 220px;
-      object-fit: cover;
-      border-radius: 10px;
-      border: 0.5px solid var(--card-border);
-      margin-top: 4px;
-    }
-
     .card-actions {
       display: flex;
       align-items: center;
@@ -503,9 +494,6 @@
         const useCaseHtml = item.use_case ?
           `<div class="use-case-box">🎯 <b>Utile per:</b> ${escapeHtml(item.use_case)}</div>` : '';
 
-        const mediaHtml = item.media && item.media.length ?
-          `<div class="card-media"><img src="${item.media[0]}" alt="media preview" loading="lazy"></div>` : '';
-
         return `
           <article class="card">
             <div class="card-meta">
@@ -526,7 +514,6 @@
             ${pointsHtml}
             ${useCaseHtml}
             ${tagsHtml}
-            ${mediaHtml}
 
             <div class="card-actions">
               <a href="${item.url}" target="_blank" rel="noopener" class="btn-x">

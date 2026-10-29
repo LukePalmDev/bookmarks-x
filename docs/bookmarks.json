@@ -24,9 +24,6 @@
     "date": "29 Ott 2026",
     "timestamp": 1793305995,
     "text": "Introducing Surya OCR 2.5!\n\n- Most accurate open OCR model under 1B params (85.9 on OmniParseBench)\n- 1.7x faster than Surya 2, 4.5 pages/s on H100\n- 689M params, with character tokenization https://t.co/IvGMPoDWEr",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2115901403642146817/img/yaxqyZLLA849mYcM.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -54,84 +51,114 @@
     "date": "29 Ott 2026",
     "timestamp": 1793303971,
     "text": "Today, we’re sharing a look at our expanded system for monitoring frontier models at OpenAI, which in September helped us catch a model’s attempt to access the live internet during training.\n\nSince the Hugging Face incident—when models broke out of an internal cybersecurity investigation where we weren’t running our misalignment monitors—we’ve substantially expanded our monitoring of frontier agents. We now monitor all frontier reinforcement learning runs and evaluations, as well as all internal Codex use. When our system finds evidence of a problem that might require intervention, it rapidly alerts human responders who can investigate and take action.\n\nTo detect when a model’s behavior departs from what we intended, we use several layers of monitoring. Activation probes look for patterns in a model’s internal activity. Reviewer models examine its reasoning and tool use, and investigative agents can read back through the model’s entire transcript to understand how a sequence of actions fits together and whether it warrants human review.\n\nTo test whether our current system would have detected the Hugging Face incident, we replayed the recorded activity with our new monitors in place. In the replay, our monitors alerted our security team about 30 minutes after the agents escaped their sandbox. That was more than 30 hours before the point at which the agents breached Hugging Face’s systems in the original incident.\n\nIn September, a model exploited a DNS misconfiguration to reach the live internet. Our monitors flagged the breach within 15 minutes, and a responder began reviewing the alert three minutes later. The alert enabled responders to investigate while the run was still underway.\n\nAs we give models more autonomy, we need to know when they cross a boundary we expected to hold. We believe that monitoring is essential to catching those failures in time for people to intervene. \nhttps://t.co/dIYP7B1GlD",
-    "media": [],
     "status": "analyzed"
   },
   {
     "id": "2115387371281584583",
-    "title": "OpenBot, OpenMuse, OpenDots e OpenDuet: alternative open source self-hosted di CopilotKit",
+    "title": "Quattro alternative open source self-hosted a Grok Bot, Muse, Dots e Duet",
     "author": "Eli Berman (@eli__berman)",
     "screen_name": "eli__berman",
-    "category": "📌 Risorsa X",
-    "summary": "The best self-hosted version of:\n\nGrok Bot?\n→ OpenBot (7.5k ⭐️): https://t.co/cVSeLqfxEE\n\nMuse?\n→ OpenMuse (5.8k ⭐️): https://t.co/ci863Qcrt6\n\nDots?\n→ OpenDots (6.1k ⭐️): https://t",
-    "points": [],
-    "use_case": "",
-    "tags": [],
+    "category": "⚡ Risorse & GitHub",
+    "summary": "Il post segnala quattro template open source di CopilotKit (OpenBot, OpenMuse, OpenDots, OpenDuet) come alternative self-hosted a prodotti AI proprietari. Condividono la stessa infrastruttura di base e differiscono soprattutto per l'interfaccia, quindi possono essere clonati e personalizzati come punto di partenza.",
+    "points": [
+      "OpenBot (circa 7,5k stelle) come alternativa self-hosted a Grok Bot",
+      "OpenMuse (circa 5,8k stelle) come alternativa a Muse e OpenDots (circa 6,1k stelle) come alternativa a Dots",
+      "OpenDuet (circa 1k stelle) come alternativa a Duet: agenti AI proattivi, self-hostable, compatibili con qualsiasi agent harness",
+      "OpenDuet include generazione e modifica di asset in tempo reale, approvazioni human-in-the-loop, computer use e supporto per mobile, web e canali"
+    ],
+    "use_case": "Utile per chi vuole un'interfaccia agentica di proprietà, da self-hostare e personalizzare nell'UX, senza dipendere da un prodotto chiuso.",
+    "tags": [
+      "#opensource",
+      "#selfhosted",
+      "#agenti",
+      "#copilotkit",
+      "#github"
+    ],
     "url": "https://x.com/eli__berman/status/2115387371281584583",
     "date": "28 Ott 2026",
     "timestamp": 1793182625,
     "text": "The best self-hosted version of:\n\nGrok Bot?\n→ OpenBot (7.5k ⭐️): https://t.co/cVSeLqfxEE\n\nMuse?\n→ OpenMuse (5.8k ⭐️): https://t.co/ci863Qcrt6\n\nDots?\n→ OpenDots (6.1k ⭐️): https://t.co/oMgMtXiUxP\n\nDuet?\n→ OpenDuet (1k ⭐️): https://t.co/TpIkZECsyi\n\nThey all have similar underlying infra. The main difference is YOUR preference of UXUI.\n\nAll open source, by @CopilotKit. \n\nSo you can clone it, customize it, and make it yours. These templates get you 99% of the way there.",
-    "media": [
-      "https://pbs.twimg.com/media/HVtdHuGXoAAXwbS.jpg",
-      "https://pbs.twimg.com/media/HVtdKT9XMAAfFoO.jpg"
-    ],
     "status": "analyzed"
   },
   {
     "id": "2115111877558898931",
-    "title": "Parallel lancia Decisions API: primo motore decisionale basato sul web in tempo reale",
+    "title": "Parallel Decisions API: decisioni AI con dati web aggiornati in tempo reale",
     "author": "Parallel Web Systems (@p0)",
     "screen_name": "p0",
-    "category": "📌 Risorsa X",
-    "summary": "Introducing the Parallel Decisions API: the first web-grounded decisions engine.\n\nDecision models like Jev can answer in an instant, but they lack the recency of current news. Now ",
-    "points": [],
-    "use_case": "",
-    "tags": [],
+    "category": "🛠️ Strumenti & App",
+    "summary": "Parallel lancia un'API che combina modelli decisionali con ricerca web in tempo reale, così una singola chiamata restituisce una risposta basata sia sul ragionamento del modello sia su notizie e dati recenti. Il prezzo dichiarato è di 0,001 $ per richiesta, con 5.000 richieste gratuite di prova.",
+    "points": [
+      "Combina un modello decisionale con ricerca web, risolvendo il problema della mancanza di aggiornamento dei modelli statici",
+      "Prezzo dichiarato di 0,001 $ per richiesta, con 5.000 richieste gratuite per la prova",
+      "Casi d'uso indicati: fact-checking di contenuti, aggiornamento di record bancari obsoleti, classificazione di lead con segnali freschi, backtest di strategie di trading, monitoraggio dell'inventario e-commerce dei concorrenti",
+      "Il post è un annuncio di prodotto: le affermazioni sulle prestazioni non sono verificate né supportate da benchmark pubblicati"
+    ],
+    "use_case": "Utile per sviluppatori e team dati che hanno bisogno di decisioni automatiche basate su informazioni aggiornate, come verifica di fatti, arricchimento di lead o monitoraggio della concorrenza, senza costruire una pipeline di ricerca web da zero.",
+    "tags": [
+      "#ai",
+      "#api",
+      "#webgrounding",
+      "#decisionai",
+      "#sviluppo"
+    ],
     "url": "https://x.com/p0/status/2115111877558898931",
     "date": "27 Ott 2026",
     "timestamp": 1793116943,
     "text": "Introducing the Parallel Decisions API: the first web-grounded decisions engine.\n\nDecision models like Jev can answer in an instant, but they lack the recency of current news. Now you can get both in a single call.\n\nDecisions API is live today at $0.001 per request.\n\nTry it with 5,000 free requests: https://t.co/tu4CidUdxV\n\nHere are some examples we've been experimenting with:\n\n- Fact-check content (@Grok is this true?)\n- Refresh stale banking records\n- Classify companies and leads with fresh signals\n- Backtest trading strategies\n- Track competitor e-commerce inventory",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2115111814765969408/img/XnHeXPBChhpJQ4yy.jpg"
-    ],
     "status": "analyzed"
   },
   {
     "id": "2114051703427498137",
-    "title": "Trasformare Claude Code in un second brain con CLAUDE.md, memoria e Playwright",
+    "title": "Trasformare Claude Code in un second brain con CLAUDE.md e MCP",
     "author": "plusxbt (@plusxbt)",
     "screen_name": "plusxbt",
-    "category": "📌 Risorsa X",
-    "summary": "It is becoming f*cking dangerous: when Anthropic shipped CLAUDE.md, they didn't even realize they were opening a Pandora's box\n\n1. Make an empty folder on your computer, call it SE",
-    "points": [],
-    "use_case": "",
-    "tags": [],
+    "category": "🤖 Agenti & Coding AI",
+    "summary": "Una struttura di cartelle con un CLAUDE.md che impone di salvare i fatti chiave in file tematici, così Claude Code ritrova il contesto tra una sessione e l'altra. Con Playwright MCP e una skill dedicata, la stessa routine può anche controllare un browser reale con un solo comando.",
+    "points": [
+      "Cartella di progetto con sottocartelle MEMORY/, notes/, people/ e projects/, e un CLAUDE.md alla radice con la regola di salvare ogni fatto importante in MEMORY, un argomento per file.",
+      "Gli @-link nel CLAUDE.md fanno caricare automaticamente i file principali all'inizio di ogni sessione, senza doverli richiamare a mano.",
+      "Il comando claude mcp add collega Playwright MCP, che permette a Claude di navigare e interagire con un browser reale.",
+      "Una skill in .claude/skills/ raggruppa l'intera routine di lettura e salvataggio della memoria in un unico comando riutilizzabile."
+    ],
+    "use_case": "Utile a chi usa Claude Code su progetti ricorrenti e vuole continuità di contesto tra sessioni senza database esterni o infrastruttura aggiuntiva, sapendo però che la memoria dipende dal fatto che l'agente scriva davvero nei file.",
+    "tags": [
+      "#claude",
+      "#claudecode",
+      "#agenti",
+      "#mcp",
+      "#memoria"
+    ],
     "url": "https://x.com/plusxbt/status/2114051703427498137",
     "date": "24 Ott 2026",
     "timestamp": 1792864177,
     "text": "It is becoming f*cking dangerous: when Anthropic shipped CLAUDE.md, they didn't even realize they were opening a Pandora's box\n\n1. Make an empty folder on your computer, call it SECOND BRAIN\n2. Open Claude Code inside it\n3. Add subfolders: MEMORY/, notes/, people/, projects/\n4. Drop a CLAUDE.md in the root with one rule: save every key fact to MEMORY, one topic per file\n5. Add @-links in CLAUDE.md so key files load into context every session\n6. Run claude mcp add to connect Playwright MCP, now Claude controls a real browser\n7. Build a skill in .claude/skills/ so one command runs the entire routine\n\nFolder setup: about 5 minutes\n\nYour Claude becomes a second brain: it keeps every key fact between sessions, loads your main files by itself and drives a real browser\n\nFull guide in the article below",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2114051386371440641/img/2lP5l_bXihbYs5OD.jpg"
-    ],
     "status": "analyzed"
   },
   {
     "id": "2113635335267643591",
-    "title": "Scenario open-sources 1.300+ 3D models su Hugging Face, licenza CC BY 4.0",
+    "title": "Scenario rilascia open source 1.300+ modelli 3D su Hugging Face",
     "author": "Scenario (@Scenario_gg)",
     "screen_name": "Scenario_gg",
-    "category": "📌 Risorsa X",
-    "summary": "We just open-sourced 1,300+ 3D models.\n\nThat's 39 GB of 3D files, free to download on Hugging Face.\n\nhttps://t.co/2ilZjaYXDx\n\n> Hitem3D, Meshy, Rodin, Tripo, Claude Opus 5.5 3D and",
-    "points": [],
-    "use_case": "",
-    "tags": [],
+    "category": "⚡ Risorse & GitHub",
+    "summary": "Scenario ha pubblicato in open source oltre 1.300 modelli 3D (circa 39 GB) gratuitamente su Hugging Face, con licenza CC BY 4.0. Ogni esempio include immagine di input, prompt e impostazioni esatte, così da poter riprodurre i risultati.",
+    "points": [
+      "Dataset di circa 1.300 modelli 3D (39 GB) disponibile gratuitamente su Hugging Face.",
+      "I modelli sono generati con diversi strumenti: Hitem3D, Meshy, Rodin, Tripo e i modelli 3D di Claude Opus 5.5 e GPT-6 Astra, tutti eseguiti sulla piattaforma Scenario.",
+      "Formati: GLB con texture fino a 8K e file Blender nativi per i modelli di Opus e Astra.",
+      "Licenza CC BY 4.0, che consente il riutilizzo anche commerciale con attribuzione; ogni esempio include input, prompt e impostazioni."
+    ],
+    "use_case": "Utile per chi lavora con asset 3D (game dev, prototipazione, rendering o test di pipeline di generazione) e vuole partire da modelli reali con parametri documentati, senza generarli da zero.",
+    "tags": [
+      "#3d",
+      "#huggingface",
+      "#opensource",
+      "#asset",
+      "#blender"
+    ],
     "url": "https://x.com/Scenario_gg/status/2113635335267643591",
     "date": "23 Ott 2026",
     "timestamp": 1792764908,
     "text": "We just open-sourced 1,300+ 3D models.\n\nThat's 39 GB of 3D files, free to download on Hugging Face.\n\nhttps://t.co/2ilZjaYXDx\n\n> Hitem3D, Meshy, Rodin, Tripo, Claude Opus 5.5 3D and GPT-6 Astra 3D, all run on Scenario\n\n> every example ships its input image, prompt and exact settings\n\n> GLB up to 8K textures, native Blender files from Opus and Astra, CC BY 4.0",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2113635253310935041/img/f-5AP-QXfuz17hOF.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -159,9 +186,6 @@
     "date": "22 Ott 2026",
     "timestamp": 1792668787,
     "text": "Most people use Claude Code like a chatbot.\n\nThat’s the mistake.\n\nClaude Code becomes far more powerful when you structure your project around:\n\n→ CLAUDE.md for project-wide instructions\n→ .mcp.json for tool integrations\n→ settings.json for permissions & hooks\n→ Custom commands for repeatable workflows\n→ Skills for task-specific expertise\n→ Agents for specialized work\n\nI turned this complete Claude Code project structure into a simple step-by-step guide.\n\nSave this. It can completely change how you work with Claude Code.\n\nComment: \"Code\" &  l'll DM it to you.",
-    "media": [
-      "https://pbs.twimg.com/media/HVO1dk7aQAAvoKF.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -188,9 +212,6 @@
     "date": "19 Ott 2026",
     "timestamp": 1792377639,
     "text": "@brad_frost I made these with Claude + Pele https://t.co/FJadKBQjdG",
-    "media": [
-      "https://pbs.twimg.com/media/HU9ey_KasAA2O_F.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -218,9 +239,6 @@
     "date": "16 Ott 2026",
     "timestamp": 1792172553,
     "text": "This week, we launched Indra, a 1M parameter OCR model that's 15x faster than Tesseract on CPU and much more accurate.\n\nI still can't believe how good this model is. https://t.co/VTLvxmMSaw",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2111138417346064384/img/yxE8MhfkcyRNURzu.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -248,10 +266,6 @@
     "date": "16 Ott 2026",
     "timestamp": 1792138202,
     "text": "Notion x Grok Bot、えぐい。\n\n海外で、Xのブックマークや読んだ本、講義のメモまでをNotionに集めている人がいます。作っているのは「メンタルモデル」（頭の整理に使う考え方の型）のデータベース。\n\n・XのブックマークはGrok Bot経由でNotionに取り込む\n・本や講義、会議メモなどいくつもの元ネタを横断する\n・毎朝、その日に考えられる型をメールで送る設計\n\nなど、ためた情報が毎朝ひとつの学びになって返ってくる仕組みらしいです👇",
-    "media": [
-      "https://pbs.twimg.com/media/HUvNcQObkAAgKjz.png",
-      "https://pbs.twimg.com/media/HUvNcbKakAAaUDg.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -279,24 +293,33 @@
     "date": "15 Ott 2026",
     "timestamp": 1792095805,
     "text": "The world of personal agents keeps growing\n\nKeep track of it here",
-    "media": [],
     "status": "analyzed"
   },
   {
     "id": "2110445990411186561",
-    "title": "Oak di Speechmatics: un unico modello medico per la trascrizione in oltre 55 lingue",
+    "title": "Speechmatics Oak: un unico modello medico per oltre 55 lingue",
     "author": "Speechmatics (@Speechmatics)",
     "screen_name": "Speechmatics",
-    "category": "📌 Risorsa X",
-    "summary": "One medical model. 55+ languages 🌎\n\nSpeechmatics’ Oak brings multilingual medical transcription to your AI scribe, without a separate model for every language.\n\nBuild for more pati",
-    "points": [],
-    "use_case": "",
-    "tags": [],
+    "category": "🛠️ Strumenti & App",
+    "summary": "Speechmatics presenta Oak, un modello di trascrizione medica multilingue che serve da base per AI scribe in più lingue senza richiedere un modello separato per ciascuna. Il vantaggio concreto è poter estendere il prodotto a più pazienti e mercati con un'unica architettura.",
+    "points": [
+      "Un solo modello copre oltre 55 lingue nel dominio medico.",
+      "Integrabile in AI scribe per la documentazione clinica.",
+      "Elimina la necessità di mantenere un modello dedicato per ogni lingua.",
+      "Obiettivo dichiarato: ampliare la base di pazienti e i mercati raggiungibili."
+    ],
+    "use_case": "Utile per sviluppatori di software sanitario o AI scribe che vogliono supportare pazienti e cliniche in più lingue senza gestire pipeline separate per ogni idioma.",
+    "tags": [
+      "#speechmatics",
+      "#trascrizione",
+      "#healthtech",
+      "#ai",
+      "#multilingue"
+    ],
     "url": "https://x.com/Speechmatics/status/2110445990411186561",
     "date": "14 Ott 2026",
     "timestamp": 1792004508,
     "text": "One medical model. 55+ languages 🌎\n\nSpeechmatics’ Oak brings multilingual medical transcription to your AI scribe, without a separate model for every language.\n\nBuild for more patients and markets.",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -324,9 +347,6 @@
     "date": "13 Ott 2026",
     "timestamp": 1791907338,
     "text": "$52M seed round. 15M+ users. But this is what we're most proud of yet.\n\nIntroducing Drama 3: the most emotive and controllable TTS model in the world\n\nAnd yes, it's open-weight.\n\nYou can now control how even a single word should sound, change its tone, and shift your voice mid-sentence.\n\nUncle Roger was impressed too.\n\nTry it here:\n\nhttps://t.co/4nbz4sQ4yy\n\nComment “DRAMA” within the next 48 hours for 1 month free.\n\nIf you're an enterprise your first month is on us:\n\nhttps://t.co/jBXXZSAg0p",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2110025935231881216/img/fNY7jOw1DG7Lc8D1.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -353,9 +373,6 @@
     "date": "10 Ott 2026",
     "timestamp": 1791644415,
     "text": "X25 Special Edition XBOX Wireless Controller is back up for pre-order!\n\nAmazon: https://t.co/WJIsMBtUke\nBest Buy: https://t.co/3YvIyGljjA #ad\n\nsold out everywhere else right now https://t.co/8KKamE9MNx",
-    "media": [
-      "https://pbs.twimg.com/media/HURxXavb0AAzLYz.png"
-    ],
     "status": "analyzed"
   },
   {
@@ -382,9 +399,6 @@
     "date": "9 Ott 2026",
     "timestamp": 1791580808,
     "text": "We made a fair OCR benchmark.  And we're not ranked first.\n\nIntroducing OmniParseBench - 16k tests across 90 languages with consistent, interpretable scoring. https://t.co/Kf4twzyQPk",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2108668243514683392/img/wgArC4z9fAQoxuwh.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -412,9 +426,6 @@
     "date": "9 Ott 2026",
     "timestamp": 1791525660,
     "text": "AI is now being used to recreate Adobe’s software, a developer has released seven free, open-source apps as clean-room alternatives to Adobe’s main tools:\n\n- PhotoCraft → Photoshop\n- VectorCraft → Illustrator\n- FilmCraft → Premiere Pro\n- LightCraft → Lightroom\n- EffectCraft → After Effects\n- DesignCraft → InDesign\n- PrintCraft → Acrobat Pro\n\nBuilt in Rust with help from Claude Opus 5.5, they run on Windows, Linux, and macOS under MIT/Apache licenses without using Adobe’s source code.",
-    "media": [
-      "https://pbs.twimg.com/media/HUHXSEvXkAEjh0L.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -440,9 +451,6 @@
     "date": "4 Ott 2026",
     "timestamp": 1791156548,
     "text": "Coming this week. https://t.co/uR6mXzsbW3",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2106885081000521729/img/jPe3wcvz4YPXkGaZ.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -470,7 +478,6 @@
     "date": "2 Ott 2026",
     "timestamp": 1790946662,
     "text": "Most agent memory is another database or vendor account.\n\nKeep the Why is FOSS and Git-native. The why behind decisions lives as Markdown in the repo. Git versions it, reviews it and shares it with every agent with repo access.\n\nNo extra service.",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -498,9 +505,6 @@
     "date": "1 Ott 2026",
     "timestamp": 1790871821,
     "text": "We have a Stitch MCP. We have a Stitch SDK. But, we don't have a Stitch CLI. Well, not until now.\n\nIntroducing the @google/stitch CLI:\n\n🔷 Connect to your local coding agents\n🔷 Generate screens and design systems\n🔷 Send a local dev server snapshot to Stitch\n\nDo it all without leaving the terminal or better yet, ask your favorite harness like @antigravity 😎\n\nLearn more 👇",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2105695069684789249/img/HwVFGScZU4QnsB6y.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -528,9 +532,6 @@
     "date": "1 Ott 2026",
     "timestamp": 1790853691,
     "text": "Learn AI for free directly from top companies.\n\n1 - Anthropic:  \nhttps://t.co/wN0afoUyik\n\n2 - Google:  \nhttps://t.co/fMD9rTx0ja\n\n3 - Meta:  \nhttps://t.co/WOSzd2mqKv\n\n4 - NVIDIA:  \nhttps://t.co/wIBexRIoUx\n\n5 - Microsoft:  \nhttps://t.co/4KliKC9Z14\n\n6 - OpenAI:  \nhttps://t.co/CpUS74TySP\n\n7 - IBM:  \nhttps://t.co/Hcurqftnuu\n\n8 - AWS:  \nhttps://t.co/MFKEB5WHc8\n\n9 - https://t.co/EvUVcefMJR:  \nhttps://t.co/LFcnadRtXI\n\n10 - Hugging Face:  \nhttps://t.co/kMAjDfcK4h\n\nfollow me if you find this helpful.",
-    "media": [
-      "https://pbs.twimg.com/media/HTipasuakAA2CgG.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -558,9 +559,6 @@
     "date": "30 Set 2026",
     "timestamp": 1790809017,
     "text": "Omni-IO Skills\n\nHarnessing Your Agent Omni-Native\n\npaper: https://t.co/k9IQB40rPe https://t.co/ymlAwTDGtU",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2105431624628506624/img/ieVxws7-kXzjknvv.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -588,9 +586,6 @@
     "date": "30 Set 2026",
     "timestamp": 1790784099,
     "text": "Introducing Ideogram 4.5, the most precise edit model.\n\nWith each edit, leading models add artifacts, pixel shifts, and color changes. Ideogram 4.5 eliminates artifact buildup, making multi-turn editing possible.\n\nLive in Ideogram, the API, and launch partners. Open weights soon. https://t.co/cQZYfPBAw6",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2105327069190344705/img/XG7GZTkCUcmlDhwB.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -618,9 +613,6 @@
     "date": "29 Set 2026",
     "timestamp": 1790669863,
     "text": "@teslaeurope More and more countries are adopting the temporary approval from the RDW in Netherlands.\n\n🇳🇱 Netherlands - 10 April\n🇱🇹 Lithuania - 20 May\n🇪🇪 Estonia - 29 May\n🇩🇰 Denmark - 9 June\n🇧🇪 Belgium - 10 June\n🇸🇮 Slovenia - 7 September\n🇨🇿 Czech Republic - 21 September\n🇭🇷 Croatia - Today https://t.co/ljO8ogPgT7",
-    "media": [
-      "https://pbs.twimg.com/media/HTXr8CZXcAAUpVu.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -648,9 +640,6 @@
     "date": "28 Ago 2026",
     "timestamp": 1787925518,
     "text": "🚨PEOPLE ARE USING NOTEBOOKLM TO MASS-PRODUCE SPECIALIZED CLAUDE SKILLS IN MINUTES.\n\nInstead of writing the same prompts repeatedly, they use curated knowledge to create reusable \"SKILL▪︎md\" files that help Claude deliver consistent results for specific tasks.\n\nHere's how it works 👇👇",
-    "media": [
-      "https://pbs.twimg.com/media/HQ0HU5ub0AAap--.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -678,9 +667,6 @@
     "date": "12 Lug 2026",
     "timestamp": 1783844747,
     "text": "I turned Claude into an entire company.\n\n42 skills, organised like a real org chart (links below):\n\nHere is every department, and where to get each one.\n\nDevelopers\n\nSuperpowers \n\n→https://t.co/tGNwFVYsEa\n\nContext7\n\n → https://t.co/oExBVynS4S\n\nSkill Creator\n\n → https://t.co/iR9fyxUFvL\n\nMCP Builder \n\n→ https://t.co/iR9fyxUFvL\n\nWebapp Testing \n\n→ https://t.co/iR9fyxUFvL\n\nClaude-Mem\n\n → https://t.co/emHpdPtiUO\n\nDesigners\n\nUI UX Pro Max \n\n→ https://t.co/54NvwKmBix\n\nTaste \n\n→https://t.co/gFud3Sa93j\n\nFrontend Design \n\n→ https://t.co/gFud3Sa93j\n\nTransitions\n\n → https://t.co/kZP238n3Zy\n\nWeb Artifacts \n\n→https://t.co/iR9fyxUFvL\n\nBrand Guidelines\n\n → https://t.co/iR9fyxUFvL\n\nMarketing\n\n45 skills to run your marketing, from copywriting to SEO to lead magnets.\n\nAccess them all here \n\n→ https://t.co/oBsac9TKK4\n\nSocial Media\n\n17 skills to run your social media, from post writing to Reels to thumbnails.\n\nAccess them all here\n\n → https://t.co/ZwNtoUTdVm\n\nFinance\n\n8 skills to run your finances, from statements to reconciliation to audits.\n\nAccess them all here \n\n→ https://t.co/qk0ioMAxim\n\nSmall Business\n\n31 skills to run your small business, from cash flow to payroll to invoicing.\n\nAccess them all here \n\n→ https://t.co/m9kHptmfv9\n\nLegal\n\n9 skills to handle your legal work, from contract review to NDAs to compliance.\n\nAccess them all here \n\n→https://t.co/ucxqTYH4v9\n\nEvery skill on the chart is real and installable from the links above.\n\nRepost ♻️ this to help your network build their own.",
-    "media": [
-      "https://pbs.twimg.com/tweet_video_thumb/HNA3_RTaEAA6rAu.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -708,9 +694,6 @@
     "date": "10 Lug 2026",
     "timestamp": 1783682849,
     "text": "I think this is something worth sharing — I tried TenPayGo on my recent trip to China.\n\nSignup was quick: just used my email (no Chinese phone number needed), got a verification code, and linked Apple Pay with one tap. No extra card entry. Then I was able to scan QR codes at restaurants and metro stations without fumbling for cash.\n\nOne small thing: I used Gmail because I read that some other providers might get a “closed beta” popup — not sure, but it worked fine for me.\n\nHonestly, once it was set up, I didn't think about payments again. That alone made the trip feel smoother.",
-    "media": [
-      "https://pbs.twimg.com/media/HM3O0L-bIAAcADd.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -738,9 +721,6 @@
     "date": "10 Lug 2026",
     "timestamp": 1783667226,
     "text": "Everyone is still prompting claude\na few teams are structuring it\n\nand the difference is insane\n\nonce you add:\n\nCLAUDE.md → project memory\nskills/ → auto-activated workflows\nagents/ → parallel workers\nhooks → lifecycle automation\nMCP → external tools\nsettings.json → permissions & guardrails\n\nClaude stops being a chatbot\n\nand starts acting like a senior engineer that knows your repo\n\nit remembers conventions\nruns tests before commits\nrefactors in your style\ncalls tools automatically\nsplits work across agents\n\nthis is not prompting anymore\n\nthis is giving Claude a brain + muscle + memory\n\nthe teams using structured Claude will ship 10x faster\nbecause they’re not asking AI for answers\n\nthey’re assigning it responsibilities\n\nbookmark this before everyone discovers CLAUDE.md\n\nRT if you’re building with Claude Code already",
-    "media": [
-      "https://pbs.twimg.com/media/HM2TOs0bwAAEMnq.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -768,9 +748,6 @@
     "date": "9 Lug 2026",
     "timestamp": 1783612942,
     "text": "Claude + Genspark is a creative combo that’s hard to ignore.\n\nYou can design almost anything with AI in minutes from mobile apps to social content.\n\nHere are 5 features that stood out to us. (The 3rd one is our favorite.) https://t.co/yNIA5saVlr",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2075249112534970368/img/XYiO9z6-XScDz4y4.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -798,9 +775,6 @@
     "date": "7 Lug 2026",
     "timestamp": 1783427166,
     "text": "this is f**king dangerous\n\na free github repo with 4.8K stars just dropped the entire \"loop engineering\" framework for trading agents.\n\n12 steps to build a self-running quant desk: strategy intent → market data → signals → trading agent → verify → refine → rerun.\n\nsave and bookmark no matter what\n\nhttps://t.co/j8op1O9nJL\n\nhere is the free repo",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2074469903093141504/img/W72FoqOZZMSbDAS4.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -828,9 +802,6 @@
     "date": "6 Lug 2026",
     "timestamp": 1783346901,
     "text": "WEB SCRAPING JUST GOT A SERIOUS UPGRADE.\n\nPixelRAG doesn't read HTML. It reads the page exactly like you do.\n\n100% open-source.\n\nInstead of parsing websites into plain text, it captures screenshots and lets a vision model retrieve answers directly from the pixels.\n\nWhy that's a big deal:\n\n• HTML parsers silently lose information.\n• Tables, charts, formulas, and layouts often disappear.\n• Even changing the parser can swing RAG accuracy by ~10%.\n\nPixelRAG skips that entire bottleneck.\n\nIt indexes what users actually see.\n\nThe team built a visual index of 30M+ Wikipedia screenshots, and it outperformed the strongest text-based RAG baseline by 18.1% on text-only QA.\n\nEven cooler:\n\nIt includes a Claude Code plugin that gives Claude visual browsing.\n\nInstead of scraping the DOM, Claude can screenshot any webpage, PDF, arXiv paper, or even your local app—and answer based on the rendered page.\n\nThe pipeline is surprisingly clean:\n\n→ Render pages into image tiles\n→ Embed with Qwen3-VL-Embedding (LoRA-tuned on screenshots)\n→ Store in a FAISS index\n→ Search visually\n\nThe best part?\n\nUpgrade to a better vision model later, and you don't need to rebuild the index.\n\nBecause the index stores pixels, not parsed text.\n\nFully open-source under Apache 2.0.\n\nGitHub: https://t.co/B7whbNg60s",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2074133259538280448/img/nDlcocFFQlgh7e6l.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -857,9 +828,6 @@
     "date": "4 Lug 2026",
     "timestamp": 1783166609,
     "text": "This guy shares Claude's most effective prompt structure. https://t.co/wH70RCREDF",
-    "media": [
-      "https://pbs.twimg.com/media/HMYdhtWXMAEUkvu.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -887,9 +855,6 @@
     "date": "25 Giu 2026",
     "timestamp": 1782430574,
     "text": "New Claude Skills for UI/UX Engineers 🔥 https://t.co/PpBBVPibBW",
-    "media": [
-      "https://pbs.twimg.com/media/HLslyK2XoAA53XO.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -917,9 +882,6 @@
     "date": "24 Giu 2026",
     "timestamp": 1782303754,
     "text": "20 Powerful NotebookLM Prompts You NEED in 2026 🚀\n\n1. Smart Summary\nTurn lengthy documents into clear insights.\n✨ “Summarize this material into the 10 most important ideas, arguments, and actionable takeaways in simple language.”\n\n2. Explain Like I’m New\nMake difficult topics easy to grasp.\n✨ “Explain this topic for a complete beginner using simple examples, analogies, and step-by-step explanations.”\n\n3. Advanced Breakdown\nGo beyond surface-level understanding.\n✨ “Break this content into core ideas, hidden assumptions, expert insights, and details most people overlook.”\n\n4. Source Comparison\nFind patterns and contradictions.\n✨ “Compare these sources and highlight where they agree, disagree, and what unique value each one adds.”\n\n5. Instant Study Notes\nCreate organized notes in seconds.\n✨ “Convert this content into structured study notes with headings, bullets, definitions, and examples.”\n\n6. Flashcard Creator\nLearn through active recall.\n✨ “Generate 25 useful flashcards from this material with clear questions and concise answers.”\n\n7. Interactive Quiz\nTest your understanding.\n✨ “Create a quiz that progresses from beginner to advanced based only on this source. Grade my answers afterward.”\n\n8. Memory Techniques\nRetain information faster.\n✨“Create mnemonics, memory hooks, and analogies to help me remember the key concepts.”\n\n9. Timeline Generator\nSee the bigger picture clearly.\n✨ “Extract all major events, milestones, and developments from these sources and organize them into a timeline.”\n\n10. Evidence & Quotes\nPull out the strongest insights.\n✨ “Find the most impactful quotes, statistics, and supporting evidence from these materials.”\n\n11. Identify Research Gaps\nDiscover what’s missing.\n✨ “Point out weak arguments, missing evidence, unanswered questions, and research gaps in these sources.”\n\n12. Debate Viewpoints\nStrengthen critical thinking.\n✨ “Present the strongest arguments both for and against the main idea as if two experts are debating.”\n\n13. Build a Framework\nTurn knowledge into systems.\n✨ “Transform the ideas from these sources into a practical framework, checklist, or repeatable process.”\n\n14. Repurpose Into Content\nTurn research into content assets.\n✨ “Use this material to create a LinkedIn post, article outline, tweet thread, and newsletter concept.”\n\n15. Expert Q&A Mode\nLearn directly from the material.\n✨ “Act like an expert on these uploaded sources. Answer my questions only using the provided information.”\n\n16. Executive Summary\nGet strategic insights quickly.\n✨ “Create a concise 5-minute executive briefing with key insights, implications, and action points.”\n\n17. Learning Roadmap\n Turn information into a curriculum.\n✨ “Convert this notebook into a 7-day learning plan with lessons, exercises, and checkpoints.”\n\n18. Idea Expansion\n Unlock creative applications.\n ✨ “Generate 20 original ideas, opportunities, or innovations inspired by these materials.”\n\n19. Teach It Simply\nPrepare to explain it to others.\n✨ “Rewrite the key concepts into a simple teaching script I can explain in under 5 minutes.”\n\n20. Execution Plan\nMove from learning to action.\n✨ “Create a practical action plan with priorities, next steps, and deadlines based on these sources.”\n\nDo follow for more.",
-    "media": [
-      "https://pbs.twimg.com/media/HLlB_nCXIAAY23a.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -947,9 +909,6 @@
     "date": "24 Giu 2026",
     "timestamp": 1782296215,
     "text": "🚨 TWO BULGARIANS JUST KILLED THE STREAMING INDUSTRY.\n\nIt's called Stremio + Torrentio. You get 4K content from Netflix, Disney+, Hulu, and HBO Max — combined — for free.\n\nHere's how it works.\n\nStremio is the player. Polished interface. Works on Windows, macOS, Linux, Android, iOS, and TV. Install it once and it looks like any premium streaming app.\n\nTorrentio is the addon. Add it to Stremio in one click. It scrapes every major torrent provider simultaneously and delivers the best available stream straight to your player. 720p, 1080p, 4K. You choose the quality. It finds the source.\n\n→ No account required\n→ No subscription\n→ Works on every device\n→ 4K and HDR supported\n→ Subtitles built in\n\nNetflix can't touch this. There is no central server to seize. No company to sue. No domain to kill. It lives on your device and pulls from the open internet.\n\nThe entire streaming industry runs on one assumption. That you'll keep paying $70/month instead of spending 5 minutes on GitHub.\n\nThat assumption just died in Sofia, Bulgaria.\n\nMIT License. 100% Open-source.\n\nGet the addon here: https://t.co/8mLFZRtxSE",
-    "media": [
-      "https://pbs.twimg.com/media/HLklPgYboAAyAYq.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -976,9 +935,6 @@
     "date": "23 Giu 2026",
     "timestamp": 1782193744,
     "text": "🎯THE COMPLETE CLAUDE COMMAND\n\nTHE ULTIMATE CHEAT SHEET | 90 COMMANDS\n\n---\n\n1. START & CREATE\n\n/new → Start a fresh conversation\n\n/project → Create a new project\n\n/upload → Attach files for Claude to read\n\n/paste → Paste from clipboard\n\n/template → Use a pre-built prompt structure\n\n/import → Import from a file\n\n/scan → Scan documents\n\n/voice → Use voice input\n\n---\n\n2. FOCUS & CONTEXT\n\n/focus → Tell Claude exactly what you want\n\n/context → Add background so answers are sharper\n\n/details → Provide more details\n\n/examples → Give examples\n\n/clarify → Let Claude ask the right questions first\n\n/define → Define terms\n\n/assumptions → List assumptions\n\n/priorities → Set priorities\n\n/constraints → Set constraints\n\n---\n\n3. THINK & SOLVE\n\n/analyze → Break any problem into parts\n\n/compare → Put two options head to head\n\n/pros-cons → List pros & cons\n\n/evaluate → Evaluate ideas\n\n/recommend → Get recommendations\n\n/brainstorm → Generate ideas fast, no filter\n\n/solve → Solve the problem\n\n/challenge → Challenge assumptions\n\n---\n\n4. WRITE & EDIT\n\n/write → Generate content from scratch\n\n/edit → Clean up what you already have\n\n/rewrite → Same message, better delivery\n\n/shorten → Cut the fluff, keep the punch\n\n/expand → Add more detail\n\n/improve → Improve writing\n\n/summarize → Summarize text\n\n/paraphrase → Paraphrase text\n\n/proofread → Proofread text\n\n---\n\n5. ORGANIZE & STRUCTURE\n\n/outline → Build a skeleton before writing\n\n/structure → Organize content\n\n/bullet → Turn text into scannable points\n\n/numbered → Make numbered list\n\n/table → Organize comparisons visually\n\n/summary → Summarize content\n\n/key-points → Extract key points\n\n/mindmap → Map out connected ideas\n\n/flowchart → Create flowchart\n\n---\n\n6. CODE & TECH\n\n/code → Write code in any language\n\n/debug → Find and fix issues\n\n/explain → Explain code\n\n/optimize → Make code faster and cleaner\n\n/refactor → Improve code structure\n\n/test → Write tests\n\n/convert → Convert formats\n\n/documentation → Write docs\n\n/review → Review code\n\n---\n\n7. DATA & ANALYSIS\n\n/analyze-data → Find patterns in raw data\n\n/visualize → Turn numbers into charts\n\n/insights → Extract key insights\n\n/forecast → Make predictions\n\n/report → Generate report\n\n/stats → Calculate statistics\n\n/clean → Clean data\n\n---\n\n8. AUTOMATE & INTEGRATE\n\n/workflow → Design repeatable process\n\n/automate → Remove manual steps\n\n/api → Connect tools via API\n\n/integrate → Integrate systems\n\n/schedule → Schedule tasks\n\n/trigger → Set triggers\n\n/tasklist → Create task list\n\n/checklist → Create checklist\n\n---\n\n9. PERSONALIZE & CONTROL\n\n/preferences → Set preferences\n\n/memory → Save what to remember\n\n/tone → Set tone (formal, casual, bold)\n\n/style → Match writing style/persona\n\n/length → Control response length\n\n/format → Change format\n\n/reset → Reset conversation\n\n/clear → Clear context\n\n---\n\n10. LEARN & RESEARCH\n\n/search → Get current info from web\n\n/research → Deep dive into topic\n\n/learn → Beginner explanation\n\n/tldr → Summary of key points\n\n/sources → Find sources\n\n/fact-check → Verify information\n\n/explore → Explore related topics\n\n---\n\n11. COLLABORATE & SHARE\n\n/share → Share conversation\n\n/export → Save output\n\n/download → Get file instantly\n\n/copy → Copy to clipboard\n\n/email → Draft and send\n\n/publish → Publish content\n\n/feedback → Send feedback\n\n---\n\nBONUS: POWER SHORTCUTS\n\nUse “/” commands for quick access\n\nCombine commands for better results\n\nAdd context early for better answers\n\nBe specific and clear\n\nIterate and refine\n\nSave and reuse what works\n\n❤️ Like\n🔁 Retweet\n🔖 Bookmark\n\nFollow @srishtiberi for more such posts",
-    "media": [
-      "https://pbs.twimg.com/media/HLeeV2XbAAAVy5b.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1005,9 +961,6 @@
     "date": "20 Giu 2026",
     "timestamp": 1781958885,
     "text": "10 prompts to simplify your learning journey: https://t.co/TfjCbnHe4x",
-    "media": [
-      "https://pbs.twimg.com/media/HLQea-1aQAAbe8q.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1035,9 +988,6 @@
     "date": "19 Giu 2026",
     "timestamp": 1781876229,
     "text": "THE ENGINEER WHO BUILT CLAUDE CODE UNINSTALLED HIS IDE\n\nBoris Cherny doesn't write code anymore\n\nhe runs agent fleets\n\nhere's the 3-tier stack he actually uses:\n\ntier 1 → /loop (daytime)\nruns slash commands on a schedule inside live sessions.\none line deploys a junior engineer to watch your PRs 24/7:\n\n`/loop 5m /babysit`\n\n7 loops cover most of what your team does manually every day\n\ntier 2 → routines (overnight)\nruns on anthropic's infra while your laptop is closed\nhundreds of claude instances monitoring github, twitter, slack for product ideas. while he sleeps\n\n8 cron jobs...morning report...deep hygiene... weekly recap\n\ntier 3 → /batch + dynamic workflows (swarms)\ndescribe the job. claude writes the harness. fans out to thousands of agents\n\nreal example: migrate every callsite of `https://t.co/HD8d0QU6Pg` across a 4,000-file monorepo \n→ 800 agents, each with its own context window, worktree & adversarial reviewer\n\nthe bun team rewrote their entire zig codebase to rust this way\n\nthe compound effect isn't in the model it's in the system\n\nroutines write to `.claude/audit/` \n→ loops read and act on it \n→ big jobs trigger swarms \n→ swarms write results back \n→ saturday routine mines everything and updates CLAUDE.md\n\nthe engineer's job in 2026: design the harness. not write the code",
-    "media": [
-      "https://pbs.twimg.com/media/HLLjHecaIAE3ZEL.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1065,7 +1015,6 @@
     "date": "28 Mag 2026",
     "timestamp": 1779969542,
     "text": "Tired of steering your coding agents? Blume is live on Mac and launching on Linux / Windows next week! \n\nBlume helps you build an agentic-native codebase with consistent and correct context. Fewer mistakes, fewer headaches.",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -1093,9 +1042,6 @@
     "date": "20 Mag 2026",
     "timestamp": 1779310535,
     "text": "new release for text-to-cad, an open source CAD harness and skills for codex / claude:\n\n- mechanism validation (go from text prompt to functional mechanical design)\n- parameters + animations for step files\n- extended sdf, srdf, urdf support\n\n3k stars, 10k downloads, we cooking",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2057202211097051136/img/AvHiHfoaN_utCQFh.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1121,7 +1067,6 @@
     "date": "16 Mag 2026",
     "timestamp": 1778949623,
     "text": "https://t.co/vZHT1tv4QI",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -1147,7 +1092,6 @@
     "date": "15 Mag 2026",
     "timestamp": 1778844559,
     "text": "https://t.co/0Arjjbcfoa",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -1175,9 +1119,6 @@
     "date": "14 Mag 2026",
     "timestamp": 1778768981,
     "text": "🚨 Google acaba de liberar sus skills oficiales para agentes de IA.\n\nHa publicado 13 skills compatibles con Claude Code, Cursor, Copilot y otros agentes.\n\nPermiten que los agentes puedan ejecutar tareas avanzadas y automatizar flujos de trabajo complejos.\n\nEs gratis y open-source 👇",
-    "media": [
-      "https://pbs.twimg.com/media/HISVyZTWUAALlDJ.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1205,9 +1146,6 @@
     "date": "13 Mag 2026",
     "timestamp": 1778680759,
     "text": "This might kill JSON-based AI UIs faster than people expect.\n\nOpenUI generates interfaces with 67% fewer tokens than JSON.\n\nLess output.\nLower cost.\nFaster streaming.\n\nThe shift is subtle but massive:\n\nAI is moving from generating data → to generating interfaces directly.\n\nGithub link :  https://t.co/v5kvihP8vr",
-    "media": [
-      "https://pbs.twimg.com/media/HINFXPmacAAYn4p.png"
-    ],
     "status": "analyzed"
   },
   {
@@ -1233,7 +1171,6 @@
     "date": "12 Mag 2026",
     "timestamp": 1778584651,
     "text": "https://t.co/34v3W4o3hS",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -1261,9 +1198,6 @@
     "date": "12 Mag 2026",
     "timestamp": 1778569663,
     "text": "/goal is the best command in Codex, Claude Code, and Hermes right now.\n\nAnd most are using it wrong.\n\nThey write \"make no mistakes\".\n\nAnd pray.\n   \nHere's how to structure yours for a mission, to rank your uncertainties before acting, to kill scope creep, and to close every loop other prompts leave open.\n\n/goal prompt [structure below]\n\nGOAL:\n<single clear measurable outcome; one mission only>\n\nCONTEXT:\n<repo/files/architecture/current state>\n<known assumptions, dependencies, and relevant prior decisions>\n\nCONSTRAINTS:\n<what must not change>\n<required standards/patterns>\n<forbidden files/actions if any>\n\nPRIORITY: (optional)\n1. <highest priority>\n2. <secondary priority>\n3. <tertiary priority>\n\nPLAN:\n<understand first, then act>\n<restate understanding before executing non-trivial changes>\n<prefer minimal sufficient changes over broad rewrites>\n\nDONE WHEN:\n<verifiable completion state>\n<expected behavior preserved or improved>\n\nVERIFY:\n<tests/build/lint/typecheck/manual validation>\n<state what could not be verified and why>\n<include rollback/containment plan for destructive or high-risk changes>\n\nOUTPUT:\n<concise summary/docs/audit/results>\n<changed files, key decisions, risks, and follow-ups>\n\nSTOP RULES:\n<halt on high-impact ambiguity or risk; do not invent architecture, behavior, or requirements>\n<surface uncertainties together with ranked highest-confidence proposals before acting; not open-ended clarification questions>\n<do not continue expanding scope after the goal is satisfied>",
-    "media": [
-      "https://pbs.twimg.com/media/HIGdkyEbUAAIqeh.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1290,9 +1224,6 @@
     "date": "11 Mag 2026",
     "timestamp": 1778502687,
     "text": "Ali Abdaal just dropped his Claude Code workflow.\n\nAnd I think this is the most beginner-friendly breakdown anyone has published.\n\nMost Claude Code tutorials are made by engineers for engineers. \nTerminal commands. \nAPI keys. \nTechnical jargon that loses you in the first 60 seconds.\n\nAli starts from zero.",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2053812775215071232/img/aBZDh-Osm5txt1Cf.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1320,9 +1251,6 @@
     "date": "10 Mag 2026",
     "timestamp": 1778427198,
     "text": "Your Obsidian vault is probably dead.\n\nNot empty.\n\nDead.\n\nBecause saving information is not the same thing as building intelligence.\n\nRight now millions of people are spending hours building “second brains” that never think back.\n\nBeautiful folders.\nPerfect tags.\nEndless highlights.\n\nAnd absolutely zero cognitive leverage.\n\nThe scary part?\n\nAI is about to make this gap brutally obvious.\n\nMost people will use AI like a smarter Google:\nask question → get answer → forget answer.\n\nBut a small group is building something way more dangerous:\n\nAI connected to years of personal context.\n\nTheir notes.\nTheir ideas.\nTheir unfinished thoughts.\nTheir reading history.\nTheir obsessions.\nTheir patterns.\n\nAt that point AI stops acting like a chatbot.\n\nAnd starts acting like a cognitive extension of the person using it.\n\nThat changes everything.\n\nBecause the biggest advantage in the AI era will not be prompts.\n\nIt will be accumulated context.\n\nPeople with connected knowledge systems are going to think faster, write better, learn quicker, and spot opportunities earlier than everyone else.\n\nNot because they’re smarter.\n\nBecause they stopped starting from zero every day.\n\nMost vaults are storage systems.\n\nThe best ones become intelligence systems.",
-    "media": [
-      "https://pbs.twimg.com/media/HH9-G0maIAEeaRb.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1348,7 +1276,6 @@
     "date": "10 Mag 2026",
     "timestamp": 1778409061,
     "text": "https://t.co/VwGz9vdoPB",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -1376,9 +1303,6 @@
     "date": "9 Mag 2026",
     "timestamp": 1778370310,
     "text": "INSTEAD OF SCROLLING ALL NIGHT.\n\nSpend 60 minutes with this instead.\n\nObsidian + Browser-use = 24/7 Knowledge Ingest.\n\nYour assistant builds its own brain while you sleep.\n\nThe people who implement this tonight will never wake up the same.\n\nRead it and Bookmark it now. https://t.co/GBNEXIlgoX",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2053244775608860674/img/PpnJulPx-uqwzm12.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1406,9 +1330,6 @@
     "date": "9 Mag 2026",
     "timestamp": 1778345448,
     "text": "Fun interactive science app ideas | Part 3\n\nPlayed around with generating 3D biological structures and made an app to explore them interactively\n\nUI Design\nGPT Images 2\n\nCode\nGemini 3.1 Pro\n\nMore demos ↓ https://t.co/j0tZl5kicO",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2053154320028405760/img/puRmZd0StlTgSewf.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1434,7 +1355,6 @@
     "date": "9 Mag 2026",
     "timestamp": 1778336048,
     "text": "https://t.co/W4MxdOyUKD",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -1462,9 +1382,6 @@
     "date": "9 Mag 2026",
     "timestamp": 1778334653,
     "text": "My friend just released Claude skill that turns interface screenshots into an interactive UI and a ready-to-use onboarding video. https://t.co/oF6sQexxrh",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2053110383313932292/img/qfR7XN70f-oqyEQc.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1490,7 +1407,6 @@
     "date": "7 Mag 2026",
     "timestamp": 1778125956,
     "text": "https://t.co/1gCU5MmJ6n",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -1518,9 +1434,6 @@
     "date": "5 Mag 2026",
     "timestamp": 1778000453,
     "text": "Design ANY room for FREE 💥\n\nDrawing from scratch lets you put your ideas right on the canvas.\n\nAnd it’s now available on Maket for FREE!\n\nHere’s a step by step breakdown 👇 https://t.co/KvdGLqBOxp",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2051708661656154112/img/ZYFyZ0An5U3Pj1Ii.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1546,7 +1459,6 @@
     "date": "5 Mag 2026",
     "timestamp": 1777972517,
     "text": "https://t.co/oHBuKjdDF0",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -1572,7 +1484,6 @@
     "date": "4 Mag 2026",
     "timestamp": 1777901080,
     "text": "https://t.co/fJOJ0dRtxl",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -1600,9 +1511,6 @@
     "date": "1 Mag 2026",
     "timestamp": 1777639377,
     "text": "Most AI slide tools only work on what they generated. Slidekick now works on any deck you already have.\n\nUpload any .pptx - built in Perceptis, PowerPoint, or anywhere else. Once it's in, every slide becomes editable with the full power of Slidekick.\n\nUse the prompt field to describe your changes. Or draw a selection over any part of the slide and edit exactly what you want.\n\nYour existing work. Slidekick's output quality.",
-    "media": [
-      "https://pbs.twimg.com/tweet_video_thumb/HHPAeeOagAAMZAv.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1630,9 +1538,6 @@
     "date": "30 Apr 2026",
     "timestamp": 1777562833,
     "text": "Geometry changes everything.\n\nGeometry was the missing layer in AI.\nWe believe if you don’t own the geometry, you don’t own the outcome.\n\nNow it’s obvious.\nText → Floorplans → CAD → Render\nMade with @opengeometry, @threejs @GoogleAI \n#aec #bim #cad #architecture #building https://t.co/UCDlYHuo3m",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2049872655394734081/img/R9pAkUds_Hj6CHOA.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1660,7 +1565,6 @@
     "date": "28 Apr 2026",
     "timestamp": 1777392000,
     "text": "Available now: Google’s official Agent Skills repository on @github!\n\nLearn how to equip agents with additional, condensed expertise with Agent Skills—and stay tuned for additional skills in this repo in the coming weeks and months → https://t.co/K3CIaC5LTX",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -1686,7 +1590,6 @@
     "date": "27 Apr 2026",
     "timestamp": 1777309228,
     "text": "https://t.co/1g3RkKBBO5",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -1714,9 +1617,6 @@
     "date": "26 Apr 2026",
     "timestamp": 1777175699,
     "text": "Introducing Claude Code Hook - Context Timeline\n\n(Saving this to try later)\n\nInstall with: npx claude-code-templates@latest --hook monitoring/context-timeline\n\nManaging the context window and the subagents running in Claude Code is hard to keep track of\n\nThat's why I built this hook... It starts the moment you open a session and shows a timeline with the main agent's context window and how subagents start working in their own separate context\n\nEvery subagent you have running will show up in real time\n\nThis way you can manage the context and the subagents you run, and see everything in a much simpler way than in the console",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2048248778113912832/img/uCB-cBNJSPLV5MgK.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1744,9 +1644,6 @@
     "date": "25 Apr 2026",
     "timestamp": 1777129530,
     "text": "Claude Code Isn’t About Prompts\n\nMost people think using Claude Code is about writing better prompts.\nThat’s the wrong model.\n\nPrompts are just the interface.\n\nStructure is the real intelligence.\n\nIf your repository is unstructured, Claude behaves like a chatbot.\nIf your repository is engineered, Claude behaves like a developer inside your system.\n\nThis is the shift most people miss.\n\nClaude Code Operating System V2\n\nA well-designed Claude project is not a repo.\nIt’s an execution system.\n\nAnd it only works when these layers are intentional.\n\n1. CLAUDE.md = System Brain\n\nThis is not documentation.\nThis is how Claude thinks inside your project.\n\nIt should only contain:\n\n• Mission — what the system is optimizing for\n• Mental model — how the repo is structured\n• Execution rules — how decisions are made\n\nIf this file gets long, performance drops.\nClarity is more important than completeness.\n\n2. .claude/memory/ = Long-Term Intelligence\n\nThis is where the system evolves.\n\nStore only high-signal information:\n\n• patterns that worked\n• repeated mistakes\n• important learnings\n\nWithout this layer, Claude resets every time.\nWith it, Claude improves over time.\n\n3. .claude/skills/ = Execution Engine\n\nStop repeating instructions.\n\nConvert workflows into reusable units.\n\nEach skill should represent one clear capability.\n\nExamples:\n\n• code review\n• debugging\n• refactoring\n• release process\n\nThis creates consistency across sessions and teams.\n\n4. .claude/agents/ = Division of Thinking\n\nA single model doing everything leads to shallow reasoning.\n\nSplit responsibilities into roles:\n\n• architect — system design\n• coder — implementation\n• reviewer — validation\n• optimizer — improvement\n\nThis increases depth and reduces errors.\n\n5. .claude/workflows/ = Automation Layer\n\nThis is where prompting ends and systems begin.\n\nDefine complete flows:\n\nplan → build → review → test → ship\n\nYou don’t guide each step manually.\nYou trigger execution.\n\n6. .claude/hooks/ = Enforcement Layer\n\nModels are inconsistent.\nHooks are not.\n\nUse them to enforce:\n\n• formatting rules\n• test execution\n• restricted areas\n• validation checks\n\nThis is what makes the system reliable.\n\n7. docs/ = Source of Truth\n\nDo not overload context.\nDesign for navigation.\n\nClaude should be able to find information, not memorize everything.\n\nInclude:\n\n• architecture\n• decisions (ADRs)\n• runbooks\n\nGood systems expose knowledge instead of embedding it everywhere.\n\n8. Local CLAUDE.md = Precision Context\n\nSome parts of your system carry more risk.\n\nAdd local context where it matters.\n\nExamples:\n\nsrc/auth/CLAUDE.md\nsrc/persistence/CLAUDE.md\ninfra/CLAUDE.md\n\nThis gives Claude situational awareness.\nAnd significantly reduces mistakes.\n\nThe Real Difference\n\nMost people focus on:\n\n• better prompts\n• better wording\n• better tricks\n\nBut high-performing systems focus on:\n\n• structure\n• constraints\n• repeatability\n\nFinal Insight\n\nPrompting is temporary.\nStructure is permanent.\n\nOnce your repository is designed for AI,\n\nClaude stops behaving like a chatbot\nand starts operating like a developer inside your codebase.\n\nBOOKMARK IT FOR LATER",
-    "media": [
-      "https://pbs.twimg.com/media/HGwn58GakAAXSO7.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1773,9 +1670,6 @@
     "date": "24 Apr 2026",
     "timestamp": 1777063609,
     "text": "Stop doomscrolling this Friday night\n\nInvest only *ONE* hour tonight into Obsidian and Claude Code...\n\nBOOM the result is a 24/7 personal OS that grinds while you sleep 💥\n\nBuild this tonight and WIN ↓\n\nhttps://t.co/5J6T0QzfQh",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2026031854407622657/img/YGXFRZwyEiyJ0YLf.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1803,10 +1697,6 @@
     "date": "24 Apr 2026",
     "timestamp": 1777048832,
     "text": "Best GitHub repos for Claude Code that will 10x your next project in 2026 \n\n1. Claude Mem\nhttps://t.co/qrfBcNVA4G\nPersistent memory across sessions — stop re-teaching Claude your codebase\n\n2. UI UX Pro Max\nhttps://t.co/MFfeBy1df7\n50+ styles, 161 color palettes, 99 UX guidelines — Claude stops building ugly UIs\n\n3. n8n-MCP\nhttps://t.co/m1IjACB2Ry\nConnect Claude Code to 400+ n8n integrations via MCP\n\n4. LightRAG\nhttps://t.co/BFc5t8rxvh\nGraph + vector RAG — lets Claude understand large codebases structurally\n\n5. Everything Claude Code\nhttps://t.co/GXauZKz130\nSkills, instincts, security scanning, multi-language coverage — full agent harness\n\n6. Awesome Claude Code\nhttps://t.co/W8KY5Z2Zis\nCommunity bible — curated skills, hooks, slash commands, orchestrators\n\n7. Superpowers\nhttps://t.co/32Ur3WW22j\nForces structured thinking before writing a single line of code\n\n8. Claude Code Ultimate Guide\nhttps://t.co/8Tx6bR6bNL\n23K+ lines of docs, 219 templates, 271 quizzes — beginner to power user\n\n9. Antigravity Awesome Skills\nhttps://t.co/J5Fg1wn37s\n1,200+ ready-to-use skills — one of the largest collections\n\n10. Claude Agent Blueprints  \nhttps://t.co/cx8aRwPil2\n75+ agent workspace templates beyond coding\n\n11. VoiceMode MCP \nhttps://t.co/U02j2zXNeh\nNatural voice conversations with Claude Code via Whisper + Kokoro\n\n12. Awesome Claude Plugins \nhttps://t.co/ZuRpc85hXg\n9,000+ repos indexed with adoption metrics — find what people actually install\n\nBookmark this before your next build.",
-    "media": [
-      "https://pbs.twimg.com/media/HGr0AuebwAERD6u.jpg",
-      "https://pbs.twimg.com/media/HGr0CCqbYAMyXlK.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1835,9 +1725,6 @@
     "date": "23 Apr 2026",
     "timestamp": 1776961819,
     "text": "Your coding agents can now extract a design system from any website.\n\nMeet HyperDesign.\n\nPaste a URL. Get a DESIGN. md with colors, fonts, spacing, and components. All extracted visually. Drop it into Claude Code,\nCursor, or any AI coding tool.\n\nPowered by Opus 4.7 & Hyperbrowser.",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2047352318371495936/img/0Ug5-FPTQcTEHwwD.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1863,9 +1750,6 @@
     "date": "23 Apr 2026",
     "timestamp": 1776955291,
     "text": "TIL, this exists 🤩 https://t.co/PR6new8x06",
-    "media": [
-      "https://pbs.twimg.com/media/HGmPOq7a0AA3xYQ.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1893,9 +1777,6 @@
     "date": "22 Apr 2026",
     "timestamp": 1776897135,
     "text": "Official Agent Skills for Google Cloud 🪄\n\nWe just launched an official GitHub repo for @googlecloud  Agent Skills.\n\n13 new skills to be used with the agent harness of your choice: Gemini CLI, Codex, Claude Code, OpenCode.\n\nRead the full launch blog or checkout the repo below 👇",
-    "media": [
-      "https://pbs.twimg.com/media/HGixKCRaUAAyp5g.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1923,9 +1804,6 @@
     "date": "21 Apr 2026",
     "timestamp": 1776803407,
     "text": "What happens when an agent has to figure it out vs. when it already knows?\n\nWith Apollo Skills, token consumption reduces from 65k --&gt; 24K.\n\nTime to completion comes down from 5 min --&gt; 2 min. https://t.co/oAVPtAaAhh",
-    "media": [
-      "https://pbs.twimg.com/ext_tw_video_thumb/2046687878575476737/pu/img/HAhUpjLHIlb73Opf.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -1953,9 +1831,6 @@
     "date": "20 Apr 2026",
     "timestamp": 1776689984,
     "text": "Someone open-sourced a 754-skill cybersecurity brain for AI agents 🤯\n\n→ 26 security domains\n→ 5 framework mappings\n→ Production-ready skills (not demos)\n\nYou’re not using AI fully if you’re missing this:\n\nGithub link : https://t.co/iPlV1GDbd0 https://t.co/WJh44OMAre",
-    "media": [
-      "https://pbs.twimg.com/media/HGWbKJpbEAA7esp.png"
-    ],
     "status": "analyzed"
   },
   {
@@ -1983,10 +1858,6 @@
     "date": "20 Apr 2026",
     "timestamp": 1776653407,
     "text": "Claude Codeのトークンを最大90%削減するGitHubリポジトリ10選：\n\n1. RTK（Rust Token Killer）\nターミナル出力をコンテキストに流す前にフィルタリング。よく使う開発コマンドで60〜90%削減できる。\nhttps://t.co/KOoxtNuVhK\n\n2. Context Mode\nPlaywrightやGitHubのツール出力をSQLiteに退避して、クリーンな要約だけを会話に渡す。98%削減。\nhttps://t.co/EL5PXYD3zO\n\n3. code-review-graph\nTree-sitterでコードベースをローカルで知識グラフ化。Claudeが必要な部分だけ読むので大規模モノレポで49倍削減。\nhttps://t.co/NFxP9RaT5O\n\n4. Token Savior\nファイル全体ではなくシンボル単位でコードを参照するMCPサーバー。コードナビで97%削減、外部依存ゼロ。\nhttps://t.co/Bp2Z8yGhBM\n\n5. Caveman Claude\nClaudeを穴居人口調で話させてアウトプットトークンを65〜75%削減。技術的な正確さは維持したまま。\nhttps://t.co/sDWdUwoyOX\n\n6. claude-token-efficient\nCLAUDE(.)mdを一つ置くだけで出力を簡潔に保てる。コード変更なし、出力が多いセッションに最適。\nhttps://t.co/Vme8BrAVuu\n\n7. token-optimizer-mcp\nキャッシュ・圧縮・スマートツール制御を備えたMCPサーバー。繰り返しのツール出力を圧縮して95%以上削減。\nhttps://t.co/fcfM86jN0m\n\n8. claude-token-optimizer\nプロジェクトを最適化する再利用可能なセットアッププロンプト集。5分で90%のトークン節約ができる。\nhttps://t.co/LKWBghEo6c\n\n9. token-optimizer\nコンテキストを静かに食い尽くすゴーストトークンを発見。コンパクション後も品質が劣化しない。\nhttps://t.co/DYwlc5rO7A\n\n10. claude-context（by Zilliz）\nBM25＋ベクトル検索でコードベース全体をコンテキストにできるMCP。同等の検索精度で約40%削減。\nhttps://t.co/JaxXXgaX9Y\n\n保存して後で使いこなして。",
-    "media": [
-      "https://pbs.twimg.com/media/HGUPooabQAA7teS.jpg",
-      "https://pbs.twimg.com/media/HGUPoxpaYAADHp4.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -2014,9 +1885,6 @@
     "date": "19 Apr 2026",
     "timestamp": 1776587979,
     "text": "🚨 STOP BURNING YOUR TOKENS!\n\nIf you use Claude Code, you are probably wasting 80% of your context window.\n\nI found 10 ace tools that will completely rescue your API bill.\n\n1. Caveman Claude\n- Literally makes Claude talk like a caveman\n- Slashes 75% of output tokens with zero loss in accuracy\nRepo → https://t.co/eEvSOvHutG\n\n2. RTK (Rust Token Killer)\n- A blazing fast proxy that filters terminal output\n- 60-90% reduction and completely dependency-free\nRepo → https://t.co/lDfjbsbPD5\n\n3. Code Review Graph\n- Claude reads only what matters using a Tree-sitter graph\n- An unbelievable 49x token reduction on huge monorepos\nRepo → https://t.co/xGn6Pp88yX\n\n4. Context Mode\n- Sandboxes raw output into SQLite instead of your context\n- A staggering 98% context reduction on logs & GitHub\nRepo → https://t.co/Jut2bvBMUD\n\n5. Claude Token Optimizer\n- Brilliant setup prompts that optimize any project\n- 90% token savings, taking docs from 11K to 1.3K\nRepo → https://t.co/0uOFODbG7e\n\n6. Token Optimizer\n- Hunts down the invisible ghost tokens eating your context\n- Fully restores and protects your context quality\nRepo → https://t.co/LUOzjECXKm\n\n7. Token Optimizer MCP\n- Adds aggressive caching and compression to your MCP tools\n- 95%+ token reduction through pure intelligence\nRepo → https://t.co/b5Eqruo2PM\n\n8. Claude Context\n- Zilliz’s hybrid vector search MCP\n- Makes your entire codebase the context for 40% less cost\nRepo → https://t.co/hPG6pb0j3G\n\n9. Claude Token Efficient\n- Just drop one CLAUDE.md file into your repo\n- Enforces strict terseness with zero code changes\nRepo → https://t.co/fNrl6nwItF\n\n10. Token Savior\n- Navigates your code by symbols, not giant files\n- 97% reduction on code navigation with persistent memory\nRepo → https://t.co/lkILPhfwJh\n\n----\n\n[ The god-tier stack ]\nPick 2-3 based on what’s draining you:\n> Massive repo? Code Review Graph + Token Savior\n> Heavy terminal output? RTK\n> MCP data dumps? Context Mode\n> Need an instant fix? Caveman + Claude Token Efficient\n\nMost devs are bleeding tokens.\n\nRun `/context` in a fresh session and watch the savings roll in 👀",
-    "media": [
-      "https://pbs.twimg.com/media/HGQWA_7WIAAS7uW.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -2044,9 +1912,6 @@
     "date": "18 Apr 2026",
     "timestamp": 1776481212,
     "text": "Someone just made an ENTIRE Skill repo of Karpathy's viral Obsidian wiki knowledge database.\n\nDeploy these skills, and you'll be able to have full control over Obsidian using AI.\n\nBuild a second brain, edit . MD files, create databases, and more.\n\nhttps://t.co/NDdnINAa0y https://t.co/iwZsoZNkXQ",
-    "media": [
-      "https://pbs.twimg.com/media/HGJ-xPZbYAAmhkN.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -2074,9 +1939,6 @@
     "date": "17 Apr 2026",
     "timestamp": 1776450892,
     "text": "we just shipped support for subagents with `deepagents deploy`!\n\nadd an agents/ dir to your project with an AGENTS.md per specialized subagent.\n\nsubagents are great for task delegation with isolated/optimized context\n\nhttps://t.co/lnn5wf1yfj https://t.co/HyohAgXSLi",
-    "media": [
-      "https://pbs.twimg.com/media/HGILE9gWgAAMuOM.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -2102,7 +1964,6 @@
     "date": "17 Apr 2026",
     "timestamp": 1776444641,
     "text": "https://t.co/emwwJK2VBv",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -2130,9 +1991,6 @@
     "date": "17 Apr 2026",
     "timestamp": 1776441650,
     "text": "Today, we're joining Google's release of A2UI v0.9 🎉\n\nDeclarative Generative UI with your own design system.\nWorks with any AG-UI Agent.\n\nYour agents describes UI via JSON, your frontend renders it using your components catalog like lego building blocks\n\nUI is alive and dead. CLI for agents, Generative UI for humans.\n\nTry it out:\nnpx copilotkit@latest create my-app --framework a2ui",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2045170572989227008/img/v6zgLXbNh6KqE4UY.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -2160,9 +2018,6 @@
     "date": "17 Apr 2026",
     "timestamp": 1776421610,
     "text": "AI content system synced with your knowledge wiki (second brain) https://t.co/K7jcoY6HM8",
-    "media": [
-      "https://pbs.twimg.com/media/HGGbZ41bAAAAFfp.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -2191,9 +2046,6 @@
     "date": "17 Apr 2026",
     "timestamp": 1776418846,
     "text": "WhatsApp CLI that works out of the box with no config? Wassist got you\n\n&gt; npm i -g @wassist/cli \n\n- supports all message types out of the box\n- sandbox number for direct interactive messaging\n- connect your own numbers to message other people\n- All Official WhatsApp API (no bans) https://t.co/5a7ogbDTvJ",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2045074404393005056/img/Ny92uuSe69zGKvaz.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -2221,9 +2073,6 @@
     "date": "17 Apr 2026",
     "timestamp": 1776416560,
     "text": "Opus 4.7 vs Gemini 3.1 Pro vs GPT 5.4\n\nSame prompt.\n\nWhich one do you prefer? https://t.co/KJmhbtg0Ui",
-    "media": [
-      "https://pbs.twimg.com/media/HGGHf41bgAELBPp.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -2251,7 +2100,6 @@
     "date": "17 Apr 2026",
     "timestamp": 1776389554,
     "text": "Last week, Anthropic announced Project Glasswing alongside Claude Mythos Preview, a model they described as so powerful at finding vulnerabilities they couldn't release it. The announcement featured AWS, Microsoft, Google, and Apple as partners, $100M in compute credits, and a clear message: this is dangerous, and only we can be trusted to deploy it safely.\n\nThe results were real. Thousands of zero-days across every major OS and browser. A 27-year-old bug in OpenBSD. A 16-year-old bug in FFmpeg. Fully autonomous exploit chains that would have taken human researchers weeks.\n\nBut here's what bothered me: all the credit went to the model.\n\nRead the technical blog carefully and a different picture emerges. The real innovation isn't the model. It's the workflow:\n\n- Rank every file in a codebase by attack surface\n- Fan out hundreds of parallel agents, each scoped to one file\n- Use crash oracles (AddressSanitizer, UBSan) as ground truth\n- Run a second verification agent to filter noise\n- Generate exploits as a triage mechanism for severity\n\nThat's a pipeline. And pipelines are model-agnostic.\n\nAt Lazarus AI, we spend our days deploying custom AI in places where \"just use the closed API\" isn't an option: regulated industries, enterprise, and government. When I saw Glasswing, my instinct was the same one I have every week: strip out the proprietary model, keep the architecture, run it on whatever model is best for the customer.\n\nClearwing is a fully open-source vulnerability discovery engine. Crash-first hunting, file-parallel agents, oracle-driven verification, variant hunting, adversarial verification. Works with any LLM.\n\nI tested it with OpenAI Codex 5.4 and reproduced Glasswing's findings. I'm now reproducing results with our own ReAligned model - Qwen3.5 finetuned to Western alignment.\n\nMythos is certainly a great model. The N-day exploit walkthroughs in Anthropic's blog show real reasoning depth. But it's an incremental improvement over Opus, the same way Opus was over Sonnet, and Sonnet over Haiku. It's not a leap to superintelligence. It's the next point on a curve we've been watching for years.\n\nWhat actually changed the game was the workflow.\n\nDefenders shouldn't have to wait for access to a gated model to secure their software. These vulnerabilities have been sitting in codebases for decades. The tools to find them should be available to everyone: the open source maintainer running FFmpeg on a Saturday, the startup that can't afford $125/M output tokens, the researcher in a country where Anthropic doesn't operate.\n\nClearwing is MIT licensed and available now.\n\nhttps://t.co/E0WP5njZQJ\n\nClearwing enables a wide variety of security activities. Handle with care. It is sharp.",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -2277,7 +2125,6 @@
     "date": "16 Apr 2026",
     "timestamp": 1776322335,
     "text": "https://t.co/enbhzI6kvp",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -2305,7 +2152,6 @@
     "date": "15 Apr 2026",
     "timestamp": 1776272237,
     "text": "Long time in the making... Subagents! 🧠✨\n\nEach subagent comes with a separate context window, custom system instructions, and curated set of tools.\n\n• Create specialized expert agents 🤖\n• Keep the main agent focused and context clean ✨\n• Delegate work to parallel agents at the same time👥\n\nRead the blog below for details 👇",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -2333,9 +2179,6 @@
     "date": "15 Apr 2026",
     "timestamp": 1776261169,
     "text": "I connected my knowledge base to every project I work on. every agent reads my wiki before doing anything\n\nI built a knowledge base in obsidian with 230+ pages. my tweets, bookmarks, articles, ideas, notes, all compiled into structured wiki pages with cross-references\n\nthe knowledge only worked when I was inside that folder. if I started a new project or opened a different codebase, the agent had no idea what I know or how I think\n\nso I set up qmd (by tobi lutke) to index the wiki. hybrid BM25 + vector search with LLM re-ranking, runs locally. then I wrote a global skill that any agent in any project can call\n\nnow before an agent starts brainstorming, planning, or writing, it searches my entire knowledge base first. voice rules, content performance data, frameworks, past thinking on the topic\n\n1. agent in any project calls /knowledge-shann \"topic\"\n2. qmd hybrid-searches 230+ wiki pages\n3. returns relevant concept pages, source summaries, and metrics\n4. agent reads brand foundation (banned AI words, visual style, voice rules)\n5. agent starts working with that context loaded\n\nthe same pattern works for company knowledge bases too. /knowledge-espressio for agency knowledge, /knowledge-lunar for client work. different collections, same architecture\n\nthe whole knowledge layer is just markdown files indexed by qmd. one CLI command, plain text back. token efficient and works with any agent that can run bash",
-    "media": [
-      "https://pbs.twimg.com/media/HF83XlSbAAARu3I.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -2361,7 +2204,6 @@
     "date": "15 Apr 2026",
     "timestamp": 1776252258,
     "text": "Link to install https://t.co/t5fG8WllAb\n\n@mattiapomelli",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -2387,7 +2229,6 @@
     "date": "15 Apr 2026",
     "timestamp": 1776243603,
     "text": "https://t.co/pj9owQa3u3",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -2413,7 +2254,6 @@
     "date": "15 Apr 2026",
     "timestamp": 1776238357,
     "text": "https://t.co/ge5Zmq3pPN",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -2441,7 +2281,6 @@
     "date": "14 Apr 2026",
     "timestamp": 1776203941,
     "text": "Why work on one file when you can work on five at the same time? 😏\n\nRun /fleet in Copilot CLI to dispatch multiple sub-agents in parallel to tackle your codebase faster than ever. ⚡️\n\nWrite the best prompts for fleet mode. 👇\nhttps://t.co/Ev7Tey0bvy",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -2469,10 +2308,6 @@
     "date": "14 Apr 2026",
     "timestamp": 1776200807,
     "text": "Best GitHub repos for Claude Code that will 10x your next project in 2026 \n\n1. Claude Mem\nhttps://t.co/bVq2E9j48K\nPersistent memory across sessions — stop re-teaching Claude your codebase\n\n2. UI UX Pro Max\nhttps://t.co/vc8VeEJWgl\n50+ styles, 161 color palettes, 99 UX guidelines — Claude stops building ugly UIs\n\n3. n8n-MCP\nhttps://t.co/jCEvyT3jEp\nConnect Claude Code to 400+ n8n integrations via MCP\n\n4. LightRAG\nhttps://t.co/d6ow6HSadt\nGraph + vector RAG — lets Claude understand large codebases structurally\n\n5. Everything Claude Code\nhttps://t.co/7qLwhN18N0\nSkills, instincts, security scanning, multi-language coverage — full agent harness\n\n6. Awesome Claude Code\nhttps://t.co/QPxBMYtHLu\nCommunity bible — curated skills, hooks, slash commands, orchestrators\n\n7. Superpowers\nhttps://t.co/248MDMad0Z\nForces structured thinking before writing a single line of code\n\n8. Claude Code Ultimate Guide\nhttps://t.co/cL6JWd5jj3\n23K+ lines of docs, 219 templates, 271 quizzes — beginner to power user\n\n9. Antigravity Awesome Skills\nhttps://t.co/nFAffkUMMs\n1,200+ ready-to-use skills — one of the largest collections\n\n10. Claude Agent Blueprints  \nhttps://t.co/M2iNMZdPDZ\n75+ agent workspace templates beyond coding\n\n11. VoiceMode MCP \nhttps://t.co/kOI5M6P7ac\nNatural voice conversations with Claude Code via Whisper + Kokoro\n\n12. Awesome Claude Plugins \nhttps://t.co/QW2aHNnHdx\n9,000+ repos indexed with adoption metrics — find what people actually install\n\nBookmark this before your next build.",
-    "media": [
-      "https://pbs.twimg.com/media/HF5Q_avasAIJZSg.jpg",
-      "https://pbs.twimg.com/media/HF5RCkvasAIbcZw.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -2499,7 +2334,6 @@
     "date": "14 Apr 2026",
     "timestamp": 1776180956,
     "text": "Your chats don’t lie. See who ghosts and who replies with GhostRadar for macOS.",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -2527,9 +2361,6 @@
     "date": "14 Apr 2026",
     "timestamp": 1776178104,
     "text": "You can now run any CLI agent with first-class support in Warp, including Claude Code, Codex, OpenCode and Gemini CLI.\n\n• Vertical tabs\n• Notifications when they need you\n• Integrated code review\n• Remote control from mobile\n• Rich input editor\n\nDownload Warp for free today. https://t.co/3Q1VwJKUe2",
-    "media": [
-      "https://pbs.twimg.com/media/HF2v_-lasAIeyk9.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -2555,7 +2386,6 @@
     "date": "12 Apr 2026",
     "timestamp": 1775984674,
     "text": "https://t.co/xRnK1RwgKW",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -2583,7 +2413,6 @@
     "date": "9 Apr 2026",
     "timestamp": 1775767480,
     "text": "3am. PagerDuty fires. You grep logs, check dashboards, correlate spans, write a postmortem.\n\nAn AI should be doing most of that.\nWe're building it in the open. Apache 2.0.",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -2609,7 +2438,6 @@
     "date": "9 Apr 2026",
     "timestamp": 1775743504,
     "text": "https://t.co/PHzSmOlz7T",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -2635,7 +2463,6 @@
     "date": "9 Apr 2026",
     "timestamp": 1775743187,
     "text": "https://t.co/XknL2qFBAP",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -2661,9 +2488,6 @@
     "date": "8 Apr 2026",
     "timestamp": 1775674259,
     "text": "🚀 We just shipped v.0.231! \n\nGit graph is finally here: Open it from the git panel or the command palette (git graph: open). https://t.co/mrkg4ZoJSC",
-    "media": [
-      "https://pbs.twimg.com/media/HFZ4e8JXoAAE96_.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -2691,9 +2515,6 @@
     "date": "8 Apr 2026",
     "timestamp": 1775668643,
     "text": "Today we're releasing the Factory desktop app. A native interface for autonomous AI agents that work across every part of your software business. https://t.co/17j06HMb2G",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2041928347673128960/img/pHBb8EzfPGxNRCRk.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -2721,9 +2542,6 @@
     "date": "7 Apr 2026",
     "timestamp": 1775578200,
     "text": "introducing superset \n\nthe IDE for the AI agent era\n\nstop waiting on coding agents\nrun them in parallel https://t.co/wJcHmynG35",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2041547638999523328/img/tYHf8_UN6pWmHu0n.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -2751,9 +2569,6 @@
     "date": "3 Apr 2026",
     "timestamp": 1775254246,
     "text": "Already running on your Mac. Offline. With tools. https://t.co/2zWuuxwDvE",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2040186855824707584/img/Qsil0IAgCeMc6lS6.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -2781,9 +2596,6 @@
     "date": "3 Apr 2026",
     "timestamp": 1775245841,
     "text": "Build Robots\nBuild Drones\nBuild Hexapods\nBuild Glasses\nBuild Radios\nBuild Clocks\nBuild Rovers\nBuild Wearables\nBuild Rockets\nBuild Exoskeletons\nBuild Sensors\nBuild it all \nhttps://t.co/cX95N84Zqn https://t.co/QQFsXOqYjw",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2040154496769376256/img/Krn_gWP71CZiRk5t.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -2810,9 +2622,6 @@
     "date": "3 Apr 2026",
     "timestamp": 1775228040,
     "text": "you can run Claude Code for free\n\nno API costs. no rate limits. \n\n100% local on your machine.\n\nhere's how to set it up 🧵 https://t.co/QnvrLU5AHo",
-    "media": [
-      "https://pbs.twimg.com/media/HE--FC_bsAAqpcL.png"
-    ],
     "status": "analyzed"
   },
   {
@@ -2840,9 +2649,6 @@
     "date": "2 Apr 2026",
     "timestamp": 1775152345,
     "text": "FREE OPEN CLAUDE CODE \n\nGitHub link: https://t.co/tJwmJxXJM1\n\nEnjoy ;) https://t.co/qLQKYE74YR",
-    "media": [
-      "https://pbs.twimg.com/media/HE6xibDbUAAxx9y.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -2868,7 +2674,6 @@
     "date": "1 Apr 2026",
     "timestamp": 1775034647,
     "text": "https://t.co/gxTNr2YjLT",
-    "media": [],
     "status": "analyzed"
   },
   {
@@ -2896,9 +2701,6 @@
     "date": "26 Mar 2026",
     "timestamp": 1774533493,
     "text": "Native macOS database client with AI assistant\n\nhttps://t.co/h6u7c43nZm https://t.co/y4pZN2cBqf",
-    "media": [
-      "https://pbs.twimg.com/media/HEV4zyZbYAYaSoL.png"
-    ],
     "status": "analyzed"
   },
   {
@@ -2926,9 +2728,6 @@
     "date": "26 Mar 2026",
     "timestamp": 1774519347,
     "text": "How to prompt Gemini for infographics:\n\n1. Go to YouTube. Find a stupidly viral video.\n2. Open Gemini to extract content from the video.\n3. Copy paste this prompt:\n\n\"Act like an expert Content Strategist and Information Designer for a leading digital publication. Your goal is to repurpose video content into a structured infographic brief that's ready to be designed.*\n\nPlease analyze the following YouTube video: [YOUTUBE LINK].*\n\nPart 1: The Extraction\n\nFirst, provide a comprehensive breakdown of the video content. Do not just summarize; extract the \"meat\" of the content using the following structure:\n\nCore Thesis: What is the single most important argument or lesson in one sentence?\n\nKey Data/Facts: List specific numbers, case studies, or hard facts mentioned.\n\nGolden Quotes: Extract 3-5 verbatim quotes that are punchy or profound.\n\nThe Framework: If the speaker uses a specific step-by-step process or mental model, outline it clearly.*\n\nPart 2: The Infographic Structure\n\nBased only on the extraction above, organize the content into a single, visually clear infographic layout.\n\nConstraint: Avoid vague titles like \"Summary of [Video Name].\"Requirement: The infographic must tell one focused story with a logical flow from top to bottom.\n\nFormat: Provide the following:\n\n- A catchy headline for the infographic\n- A one-sentence subtitle explaining who it's for or why it matters\n- 4 to 6 clearly labeled sections, each with a short heading and 1-2 key data points or takeaways-\n\nA closing takeaway or call to action*\n\nExample of a good infographic structure:\n\nBad: \"Everything About Sales\"\n\nGood: \"The 3-Call Close Framework: Why 78% of Salespeople Lose the Deal After the First Follow-Up\"→ Section 1: The Problem (stat + context)→ Section 2: The 3-Call Framework (step-by-step)→ Section 3: Results (data + proof)→ Closing: One sentence takeaway\"\n\n1. Copy Gemini's answer.\n2. Go to Gamma(.)app.\n3. Click \"Create with AI\" → \"Generate\"\n4. Select \"Graphics\" → \"Infographics\".\n5. Paste Gemini's answer. Select \"Minimal text.\"\n6. Hit generate. It creates multiple options.\n7. Choose your style. Edit it. It's done.\n\nYou just turned a 20-minute video into an infographic you can edit, with AI images.\n\nDo it for the videos you've been 'saving for later'.",
-    "media": [
-      "https://pbs.twimg.com/media/HEVCMYrbYAEUB8N.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -2956,9 +2755,6 @@
     "date": "23 Mar 2026",
     "timestamp": 1774272858,
     "text": "🚨BREAKING: Advertising just went fully AI.\n\nYou can now use Arcads to:\n\n&gt; visually connect the best models\n&gt; lock in consistent characters\n&gt; change their outfits and scenes\n&gt; animate them perfectly, etc\n\nThis is stupidly powerful.\n\nWatch the workflow 🧵 https://t.co/nPffPaQvlb",
-    "media": [
-      "https://pbs.twimg.com/amplify_video_thumb/2036073995775434753/img/MUCVBkBToMCctIRn.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -2986,9 +2782,6 @@
     "date": "20 Mar 2026",
     "timestamp": 1774047079,
     "text": "Claude Code just quietly killed the entire startup team model.\n\nYeah — I said it.\n\nNo hiring.\nNo standups.\nNo 10-person Slack chaos.\n\nJust this:\n\nA .claude/agents/ folder with 30+ specialized agents.\n\nEach one = a single markdown file with ONE job.\n\n→ Engineer\n→ PM\n→ Marketer\n→ Designer\n→ Legal\n→ Finance\n→ QA\n\nAll replaced.\n\nBy one person.\n\nWith commands like:\n\"Hey rapid-prototyper, build this.\"\n\"Hey growth-hacker, get me users.\"\n\"Hey compliance-checker, are we safe?\"\n\nThis isn’t a tool.\n\nIt’s a one-person startup operating system.\n\nAnd right now — almost no one is using it.\n\nThat’s the edge.\n\nBookmark this before your competition does. 🔖",
-    "media": [
-      "https://pbs.twimg.com/media/HD45HTFboAUMWHU.jpg"
-    ],
     "status": "analyzed"
   },
   {
@@ -3014,7 +2807,6 @@
     "date": "11 Feb 2026",
     "timestamp": 1770827344,
     "text": "https://t.co/laiGXZ5urV",
-    "media": [],
     "status": "analyzed"
   }
 ]
