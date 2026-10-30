@@ -54,6 +54,33 @@
     "status": "analyzed"
   },
   {
+    "id": "2115473600836964838",
+    "title": "MiniCPM-OCR: OCR locale su iPhone con verifica automatica dei risultati",
+    "author": "OpenBMB (@OpenBMB)",
+    "screen_name": "OpenBMB",
+    "category": "🛠️ Strumenti & App",
+    "summary": "OpenBMB presenta MiniCPM-OCR, una famiglia di modelli open-weight per l'estrazione di testo da documenti: la versione 1.0 (1B) per il parsing, e MiniCPM-OCR Jev (2B) che valuta l'accuratezza dell'output di diversi parser OCR assegnando un punteggio di correttezza da 0 a 1. Il post mostra l'esecuzione locale su iPhone e iPad.",
+    "points": [
+      "MiniCPM-OCR 1.0 (1B): 93.68 su Real5-OmniDocBench e 54.7 su OCRBench v2, con l'obiettivo di unire precisione ed efficienza di inferenza.",
+      "MiniCPM-OCR Jev (2B): modello di verifica che confronta testo, formule e tabelle estratti con l'immagine originale, indicando dove serve una revisione umana.",
+      "Pesi aperti con deploy flessibile tramite llama.cpp, vLLM, SGLang o Ollama, e codice open-source per il fine-tuning.",
+      "Test su documenti difficili: note manoscritte, formule complesse, giornali e scansioni di bassa qualità."
+    ],
+    "use_case": "Digitalizzare appunti, documenti scansionati o PDF complessi in locale, senza inviare i dati a servizi cloud, e verificare quali estrazioni richiedono un controllo manuale.",
+    "tags": [
+      "#ocr",
+      "#minicpm",
+      "#openbmb",
+      "#localai",
+      "#documenti"
+    ],
+    "url": "https://x.com/OpenBMB/status/2115473600836964838",
+    "date": "28 Ott 2026",
+    "timestamp": 1793203184,
+    "text": "🎬 MiniCPM-OCR in action — running locally on iPhone Duo and iPad.\nParse fast and accurately. Guard the results. All in your hands. 🙌\n\nHandwritten notes, complex formulas, newspapers, poor-quality scans—real documents put OCR to the test.\n\n📄 MiniCPM-OCR 1.0 — SOTA OCR performance and speed at 1B scale.\nIt achieves 93.68 on Real5-OmniDocBench and 54.7 on OCRBench v2, combining accurate document parsing with efficient inference.\n\n🛡️ MiniCPM-OCR Jev — A 2B decision model that checks OCR accuracy.\nIt approaches Qwen3.5-397B-A17B on JevOCRBench and works with outputs from different OCR parsers.\n\nWatch it compare parsed text, formulas, and tables with the original image and assign 0–1 correctness scores—helping you pick better results and identify what needs human review.\n\n🔓 Open weights. Deploy your way.\nRun with llama.cpp, vLLM, SGLang, or Ollama. Customize with open-source fine-tuning code.\n\nWatch it in action. 👇\n\n🔗 GitHub: https://t.co/2SlATAJk08\n🤗 Hugging Face: https://t.co/Ttq31GL8eJ\n👉 Try the Demo：https://t.co/QsFAJT3AFy\nUse the API：https://t.co/dP01jBS2j2",
+    "status": "analyzed"
+  },
+  {
     "id": "2115387371281584583",
     "title": "Quattro alternative open source self-hosted a Grok Bot, Muse, Dots e Duet",
     "author": "Eli Berman (@eli__berman)",
