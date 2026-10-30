@@ -54,6 +54,33 @@
     "status": "analyzed"
   },
   {
+    "id": "2115829910476628118",
+    "title": "CLAUDE.md con regole anti-errore per Claude Code, basato su una lista di Karpathy",
+    "author": "Kaiju (@kaijucode)",
+    "screen_name": "kaijucode",
+    "category": "🤖 Agenti & Coding AI",
+    "summary": "L'autore propone un unico file CLAUDE.md da inserire nella radice del progetto, con una regola per ciascun errore che Claude commette secondo una lista attribuita ad Andrej Karpathy. Il post non riporta né il contenuto del file né la lista originale, quindi il valore pratico va verificato direttamente sul file.",
+    "points": [
+      "Un file CLAUDE.md nella root del progetto con una regola per ciascun errore ricorrente elencato da Karpathy; la lista originale è nel tweet citato, non nel post.",
+      "Il file è indicato per modelli chiamati Opus 5.5, Sonnet 5.5 e Fable 5.1: nomi e disponibilità non sono verificabili da questo post.",
+      "Il post contiene un promo per una guida separata su reverse engineering con Claude, con l'assegnazione dei modelli per costo (circa $0.30 invece di $1.50 per passata): cifre non documentate nel testo.",
+      "Il tono è prevalentemente promozionale (es. 'unreal', 'thank me later') e non sono forniti benchmark, metodologia o esempi di risultato."
+    ],
+    "use_case": "Utile per chi usa Claude come agente di coding e vuole partire da un CLAUDE.md già scritto con regole contro errori tipici, da testare e adattare al proprio progetto prima di affidarsi.",
+    "tags": [
+      "#claude",
+      "#claudecode",
+      "#agenti",
+      "#coding",
+      "#prompt"
+    ],
+    "url": "https://x.com/kaijucode/status/2115829910476628118",
+    "date": "29 Ott 2026",
+    "timestamp": 1793288135,
+    "text": "Andrej Karpathy went from 80% manual coding to 80% Claude in a few weeks. Then he listed the mistakes Claude still makes.\n\nI turned that list into one CLAUDE.md for Opus 5.5, Sonnet 5.5 & Fable 5.1, with a rule for each mistake.\n\nIt's f*cking unreal...\n\nDrop it in your project root and thank me later.\n\nbtw I also wrote a guide on reverse engineering software with Claude, which model gets which job so a pass costs $0.30 instead of $1.50, it's below 👇",
+    "status": "analyzed"
+  },
+  {
     "id": "2115473600836964838",
     "title": "MiniCPM-OCR: OCR locale su iPhone con verifica automatica dei risultati",
     "author": "OpenBMB (@OpenBMB)",
