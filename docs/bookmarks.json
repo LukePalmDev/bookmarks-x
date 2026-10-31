@@ -1,5 +1,32 @@
 [
   {
+    "id": "2116188727579918358",
+    "title": "3D OS: sei dipartimenti e 80 skill open-source per agenti di coding 3D",
+    "author": "Emm (@emmanuel_2m)",
+    "screen_name": "emmanuel_2m",
+    "category": "🤖 Agenti & Coding AI",
+    "summary": "Scenario ha rilasciato open-source 3D OS, un insieme di 80 skill organizzate in sei dipartimenti (animazione, arte, modellazione, look dev, mondi e pipeline) che estendono un agente di coding con flussi di lavoro da studio 3D. Le skill funzionano dentro Claude Code, Codex o Cursor e pilotano in locale Blender, Maya, ZBrush e i motori Unreal, Unity, Godot e Roblox.",
+    "points": [
+      "Struttura a sei dipartimenti con passaggi di consegna in sequenza, dallo schizzo iniziale fino all'asset pronto per il game engine",
+      "Copre rigging di personaggi, motion da video, image-to-3D, retopologia, UV baking ed export game-ready",
+      "Tool esperti collegano direttamente Blender, Maya, ZBrush, Unreal, Unity, Godot e Roblox sulla macchina dell'utente",
+      "Il repository GitHub non è linkato nel post: viene inviato solo su richiesta commentando \"3D\", quindi va verificato nella fonte ufficiale"
+    ],
+    "use_case": "Utile per sviluppatori indie e artisti 3D che vogliono orchestrare una pipeline di asset completa da un agente di coding, senza assemblare a mano strumenti separati.",
+    "tags": [
+      "#3d",
+      "#agenti",
+      "#claudecode",
+      "#opensource",
+      "#gamedev"
+    ],
+    "url": "https://x.com/emmanuel_2m/status/2116188727579918358",
+    "date": "30 Ott 2026",
+    "timestamp": 1793373684,
+    "text": "We just open-sourced an entire 3D studio.\n\nIntroducing 3D OS by Scenario.\n\nIt gives your coding agent 6 departments and 80 skills.\n\n📁 3D OS\n┃\n┣ 📁 Animation\n┃ ┣ 📁 Rigging Any Character\n┃ ┗ 📁 Motion From a Video\n┃\n┣ 📁 Art\n┃ ┣ 📁 Previs and Storyboards\n┃ ┗ 📁 Characters and Creatures\n┃\n┣ 📁 Modeling\n┃ ┣ 📁 Image to 3D\n┃ ┗ 📁 Hard-Surface Weapons and Vehicles\n┃\n┣ 📁 Look Dev and Lighting\n┃ ┣ 📁 PBR Materials and Retexturing\n┃ ┗ 📁 Lighting and Rendering\n┃\n┣ 📁 Worlds\n┃ ┣ 📁 Walkable 3D Worlds\n┃ ┗ 📁 Skyboxes and Splat Scenes\n┃\n┣ 📁 Pipeline\n┃ ┣ 📁 Retopology and UV Baking\n┃ ┗ 📁 Game-Ready Export\n┃\n┗ 📁 Expert Tools\n   ┣ 📁 Blender, Maya and ZBrush\n   ┗ 📁 Unreal, Unity, Godot and Roblox\n\nFrom one sketch to a game-ready asset, each department hands off to the next.\n\nAnd the expert tools drive Blender, Maya, ZBrush, Unreal, Unity, Godot and Roblox right on your machine.\n\nOne agent with an entire 3D studio behind it.\n\nRuns on Scenario, inside Claude Code, Codex or Cursor.\n\nComment “3D” and I’ll send you the GitHub repo.",
+    "status": "analyzed"
+  },
+  {
     "id": "2115904821136114003",
     "title": "Surya OCR 2.5: nuovo modello OCR open sotto 1B parametri",
     "author": "Vik Paruchuri (@VikParuchuri)",
