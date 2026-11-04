@@ -25,7 +25,7 @@ ENV["PATH"] = os.pathsep.join([
     "/opt/homebrew/bin", "/usr/local/bin", "/usr/bin", "/bin",
 ])
 
-CLAUDE_CMD = shutil.which("claude", path=ENV["PATH"]) or "/Users/luke/.local/bin/claude"
+CLAUDE_CMD = shutil.which("claude", path=ENV["PATH"]) or "claude"
 
 FALLBACK_MODEL = "sonnet"
 MAX_ATTEMPTS = 3

@@ -91,6 +91,12 @@ class TestComponents(unittest.TestCase):
 
         out_file = self.exporter.export_bookmark(bookmark)
         self.assertTrue(out_file.exists())
+        self.assertTrue(out_file.name.startswith("2026-10-29_"))
+        x_date = dict(bookmark)
+        x_date["tweet_id"] = "111"
+        x_date["created_at"] = "Wed Oct 28 14:00:00 +0000 2026"
+        x_file = self.exporter.export_bookmark(x_date)
+        self.assertTrue(x_file.name.startswith("2026-10-28_"))
         content = out_file.read_text(encoding="utf-8")
         self.assertIn("# Annuncio e Novità di Gemini 2.5 Flash", content)
         self.assertIn("Giulia Bianchi (@giuliab)", content)
@@ -149,6 +155,26 @@ class TestComponents(unittest.TestCase):
         self.assertEqual(parsed["author_screen_name"], "devacc")
         self.assertEqual(parsed["tweet_text"], "Short tweet text")
         self.assertEqual(parsed["media_urls"], ["https://pbs.twimg.com/media/sample.jpg"])
+
+        core_only = {
+            "rest_id": "9988",
+            "core": {
+                "user_results": {
+                    "result": {
+                        "rest_id": "7",
+                        "core": {"name": "New Shape", "screen_name": "newshape"},
+                    }
+                }
+            },
+            "legacy": {
+                "full_text": "Text",
+                "entities": {"media": [{"media_url_https": "https://pbs.twimg.com/media/b.jpg"}]},
+            },
+        }
+        parsed_core = XBookmarksClient._parse_tweet_result(core_only)
+        self.assertEqual(parsed_core["author_name"], "New Shape")
+        self.assertEqual(parsed_core["author_screen_name"], "newshape")
+        self.assertEqual(parsed_core["media_urls"], ["https://pbs.twimg.com/media/b.jpg"])
 
 
 if __name__ == "__main__":

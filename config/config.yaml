@@ -16,7 +16,7 @@ claude:
 gemini:
   model: "gemini-3.5-flash"
   temperature: 0.2
-  max_output_tokens: 1024
+  max_output_tokens: 2048
 
 sync:
   interval_seconds: 300 # Controllo ogni 5 minuti
