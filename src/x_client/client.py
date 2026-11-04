@@ -78,9 +78,10 @@ class XBookmarksClient:
         # Autore
         core = tweet_res.get("core", {})
         user_res = core.get("user_results", {}).get("result", {})
-        user_legacy = user_res.get("legacy", {})
-        author_name = user_legacy.get("name", "Unknown")
-        author_screen_name = user_legacy.get("screen_name", "unknown")
+        user_legacy = user_res.get("legacy") or {}
+        user_core = user_res.get("core") or {}
+        author_name = user_legacy.get("name") or user_core.get("name") or "Unknown"
+        author_screen_name = user_legacy.get("screen_name") or user_core.get("screen_name") or "unknown"
         author_id = user_res.get("rest_id", "")
 
         # Testo (priorità a note_tweet per articoli lunghi >280 caratteri)
@@ -98,10 +99,11 @@ class XBookmarksClient:
 
         # Media allegati (foto / miniature video)
         media_urls: List[str] = []
-        extended_entities = legacy.get("extended_entities", {})
-        for m in extended_entities.get("media", []):
+        extended_media = (legacy.get("extended_entities") or {}).get("media") or []
+        entity_media = (legacy.get("entities") or {}).get("media") or []
+        for m in (extended_media or entity_media):
             url = m.get("media_url_https")
-            if url:
+            if url and url not in media_urls:
                 media_urls.append(url)
 
         # Quoted tweet se presente
@@ -110,12 +112,14 @@ class XBookmarksClient:
         if quoted_result:
             if quoted_result.get("__typename") == "TweetWithVisibilityResults":
                 quoted_result = quoted_result.get("tweet", {})
-            q_user = quoted_result.get("core", {}).get("user_results", {}).get("result", {}).get("legacy", {})
+            q_user_res = quoted_result.get("core", {}).get("user_results", {}).get("result", {})
+            q_legacy_user = q_user_res.get("legacy") or {}
+            q_core_user = q_user_res.get("core") or {}
             q_legacy = quoted_result.get("legacy", {})
             quoted_data = {
                 "id": quoted_result.get("rest_id"),
-                "author": q_user.get("screen_name"),
-                "author_name": q_user.get("name"),
+                "author": q_legacy_user.get("screen_name") or q_core_user.get("screen_name"),
+                "author_name": q_legacy_user.get("name") or q_core_user.get("name"),
                 "text": q_legacy.get("full_text"),
             }
 

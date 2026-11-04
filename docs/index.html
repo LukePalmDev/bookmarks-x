@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Bookmarks-X</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -38,17 +38,31 @@
       display: flex;
       flex-direction: column;
       overflow-x: hidden;
-      padding-top: calc(var(--safe-top) + 65px);
       padding-bottom: calc(var(--safe-bottom) + 30px);
       letter-spacing: -0.015em;
     }
 
-    /* Header Fisso per iPhone 13 mini */
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Header sticky: il contenuto scorre sotto, senza restare coperto */
     header {
-      position: fixed;
+      position: sticky;
       top: 0;
-      left: 0;
-      right: 0;
       z-index: 100;
       background: rgba(0, 0, 0, 0.85);
       backdrop-filter: blur(20px);
@@ -57,10 +71,18 @@
       padding: var(--safe-top) 16px 10px 16px;
     }
 
+    .header-inner {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
     .header-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
       margin-bottom: 8px;
     }
 
@@ -137,8 +159,7 @@
       border-radius: 10px;
       padding: 0 12px 0 34px;
       color: #fff;
-      font-size: 14px;
-      outline: none;
+      font-size: 16px;
       transition: border 0.2s;
     }
 
@@ -164,6 +185,9 @@
       padding: 12px 16px 8px 16px;
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
     }
 
     .filter-scroll::-webkit-scrollbar {
@@ -222,6 +246,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
       font-size: 11px;
     }
 
@@ -243,6 +269,7 @@
       line-height: 1.3;
       color: #ffffff;
       letter-spacing: -0.015em;
+      overflow-wrap: anywhere;
     }
 
     .card-author {
@@ -266,6 +293,7 @@
       font-size: 13.5px;
       line-height: 1.4;
       color: #e5e5ea;
+      overflow-wrap: anywhere;
     }
 
     .points-list {
@@ -282,6 +310,7 @@
       color: #d1d1d6;
       display: flex;
       gap: 6px;
+      overflow-wrap: anywhere;
     }
 
     .point-item::before {
@@ -353,11 +382,12 @@
     .original-text {
       display: none;
       font-size: 12px;
-      color: #8e8e93;
+      color: #aeaeb2;
       background: #09090b;
       padding: 10px;
       border-radius: 8px;
       white-space: pre-wrap;
+      overflow-wrap: anywhere;
       line-height: 1.4;
       border: 1px dashed #27272a;
     }
@@ -391,56 +421,70 @@
 <body>
 
   <header>
-    <div class="header-top">
-      <div class="brand">
-        <span class="brand-icon">🔖</span>
-        <span class="brand-title">Bookmarks-X</span>
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="brand">
+          <span class="brand-icon" aria-hidden="true">🔖</span>
+          <span class="brand-title">Bookmarks-X</span>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="sort-btn" id="sortToggleBtn" title="Inverti ordine cronologico" aria-label="Ordina dal più recente">
+            <span class="sort-icon" id="sortIcon" aria-hidden="true">↓</span>
+            <span class="sort-label" id="sortLabel">Recenti</span>
+          </button>
+          <div class="count-badge" id="totalCount" aria-live="polite">0 post</div>
+        </div>
       </div>
-      <div class="header-actions">
-        <button class="sort-btn" id="sortToggleBtn" onclick="toggleSort()" title="Inverti ordine cronologico">
-          <span class="sort-icon" id="sortIcon">↓</span>
-          <span class="sort-label" id="sortLabel">Recenti</span>
-        </button>
-        <div class="count-badge" id="totalCount">0 post</div>
+      <div class="search-box">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <label class="sr-only" for="searchInput">Cerca titolo, autore o tag</label>
+        <input type="search" id="searchInput" placeholder="Cerca titolo, autore o tag..." autocomplete="off">
       </div>
-    </div>
-    <div class="search-box">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="Cerca titolo, autore o tag..." autocomplete="off">
     </div>
   </header>
 
-  <div class="filter-scroll" id="filterBar">
-    <button class="chip active" data-cat="all">Tutti</button>
-    <button class="chip" data-cat="🤖 Agenti & Coding AI">🤖 Agenti</button>
-    <button class="chip" data-cat="💡 Prompt & Guide">💡 Prompt</button>
-    <button class="chip" data-cat="🛠️ Strumenti & App">🛠️ Strumenti</button>
-    <button class="chip" data-cat="🔬 Modelli & Ricerca">🔬 Modelli</button>
-    <button class="chip" data-cat="⚡ Risorse & GitHub">⚡ GitHub</button>
-    <button class="chip" data-cat="📰 News & Trend">📰 News</button>
+  <div class="filter-scroll" id="filterBar" role="toolbar" aria-label="Filtra per categoria">
+    <button type="button" class="chip active" data-cat="all" aria-pressed="true">Tutti</button>
+    <button type="button" class="chip" data-cat="🤖 Agenti & Coding AI" aria-pressed="false">🤖 Agenti</button>
+    <button type="button" class="chip" data-cat="💡 Prompt & Guide" aria-pressed="false">💡 Prompt</button>
+    <button type="button" class="chip" data-cat="🛠️ Strumenti & App" aria-pressed="false">🛠️ Strumenti</button>
+    <button type="button" class="chip" data-cat="🔬 Modelli & Ricerca" aria-pressed="false">🔬 Modelli</button>
+    <button type="button" class="chip" data-cat="⚡ Risorse & GitHub" aria-pressed="false">⚡ GitHub</button>
+    <button type="button" class="chip" data-cat="📰 News & Trend" aria-pressed="false">📰 News</button>
   </div>
 
   <main class="feed" id="feedContainer">
     <div class="empty-state">Caricamento dei post salvati...</div>
   </main>
 
-  <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+  <button type="button" class="scroll-top" id="scrollTopBtn" aria-label="Torna su">↑</button>
 
   <script>
     let allBookmarks = [];
     let currentCategory = 'all';
     let sortOrder = 'desc'; // 'desc' = più recenti prima, 'asc' = meno recenti prima
 
+    function safeHttpUrl(url) {
+      try {
+        const parsed = new URL(url, window.location.origin);
+        if (parsed.protocol === 'https:' || parsed.protocol === 'http:') return parsed.href;
+      } catch (e) {}
+      return '';
+    }
+
     function toggleSort() {
       sortOrder = (sortOrder === 'desc') ? 'asc' : 'desc';
       const icon = document.getElementById('sortIcon');
       const label = document.getElementById('sortLabel');
+      const btn = document.getElementById('sortToggleBtn');
       if (sortOrder === 'desc') {
         icon.textContent = '↓';
         label.textContent = 'Recenti';
+        btn.setAttribute('aria-label', 'Ordina dal più recente');
       } else {
         icon.textContent = '↑';
         label.textContent = 'Meno recenti';
+        btn.setAttribute('aria-label', 'Ordina dal meno recente');
       }
       renderFeed();
     }
@@ -448,7 +492,10 @@
     async function loadBookmarks() {
       try {
         const res = await fetch('bookmarks.json?t=' + Date.now());
-        allBookmarks = await res.json();
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        if (!Array.isArray(data)) throw new Error('Formato non valido');
+        allBookmarks = data;
         renderFeed();
       } catch (e) {
         document.getElementById('feedContainer').innerHTML =
@@ -462,11 +509,12 @@
 
       const filtered = allBookmarks.filter(item => {
         const matchesCat = currentCategory === 'all' || item.category === currentCategory;
+        const tags = Array.isArray(item.tags) ? item.tags : [];
         const matchesSearch = !query ||
-          item.title.toLowerCase().includes(query) ||
-          item.author.toLowerCase().includes(query) ||
-          item.summary.toLowerCase().includes(query) ||
-          (item.tags && item.tags.some(t => t.toLowerCase().includes(query)));
+          (item.title || '').toLowerCase().includes(query) ||
+          (item.author || '').toLowerCase().includes(query) ||
+          (item.summary || '').toLowerCase().includes(query) ||
+          tags.some(t => String(t).toLowerCase().includes(query));
         return matchesCat && matchesSearch;
       });
 
@@ -485,8 +533,9 @@
       }
 
       feed.innerHTML = filtered.map(item => {
-        const pointsHtml = item.points && item.points.length ?
-          `<ul class="points-list">${item.points.map(p => `<li class="point-item">${escapeHtml(p)}</li>`).join('')}</ul>` : '';
+        const points = Array.isArray(item.points) ? item.points : [];
+        const pointsHtml = points.length ?
+          `<ul class="points-list">${points.map(p => `<li class="point-item">${escapeHtml(p)}</li>`).join('')}</ul>` : '';
 
         const tagsHtml = item.tags && item.tags.length ?
           `<div class="tags-container">${item.tags.map(t => `<span class="tag-chip">${escapeHtml(t)}</span>`).join('')}</div>` : '';
@@ -516,15 +565,13 @@
             ${tagsHtml}
 
             <div class="card-actions">
-              <a href="${item.url}" target="_blank" rel="noopener" class="btn-x">
-                Apri su 𝕏
-              </a>
-              <button class="btn-expand" onclick="toggleText('${item.id}', this)">
+              ${safeHttpUrl(item.url) ? `<a href="${escapeHtml(safeHttpUrl(item.url))}" target="_blank" rel="noopener noreferrer" class="btn-x">Apri su 𝕏</a>` : ''}
+              <button type="button" class="btn-expand" data-id="${escapeHtml(String(item.id))}">
                 Leggi originale ▾
               </button>
             </div>
 
-            <div class="original-text" id="text-${item.id}">
+            <div class="original-text" id="text-${escapeHtml(String(item.id))}">
 ${escapeHtml(item.text || '')}
             </div>
           </article>
@@ -534,6 +581,7 @@ ${escapeHtml(item.text || '')}
 
     function toggleText(id, btn) {
       const el = document.getElementById('text-' + id);
+      if (!el) return;
       if (el.style.display === 'block') {
         el.style.display = 'none';
         btn.innerText = 'Leggi originale ▾';
@@ -554,11 +602,24 @@ ${escapeHtml(item.text || '')}
 
     // Event Listeners
     document.getElementById('searchInput').addEventListener('input', renderFeed);
+    document.getElementById('sortToggleBtn').addEventListener('click', toggleSort);
+    document.getElementById('scrollTopBtn').addEventListener('click', () => {
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    });
+    document.getElementById('feedContainer').addEventListener('click', (event) => {
+      const btn = event.target.closest('.btn-expand');
+      if (!btn) return;
+      toggleText(btn.getAttribute('data-id'), btn);
+    });
 
     document.querySelectorAll('.chip').forEach(chip => {
       chip.addEventListener('click', () => {
-        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.chip').forEach(c => {
+          c.classList.remove('active');
+          c.setAttribute('aria-pressed', 'false');
+        });
         chip.classList.add('active');
+        chip.setAttribute('aria-pressed', 'true');
         currentCategory = chip.getAttribute('data-cat');
         renderFeed();
       });

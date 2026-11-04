@@ -2,7 +2,7 @@
 
 import json
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict
 
@@ -14,6 +14,23 @@ def sanitize_filename(name: str) -> str:
     clean = re.sub(r'[\\/*?:"<>|]', "", name)
     clean = clean.replace(" ", "-").lower()
     return clean[:50]
+
+
+def bookmark_iso_date(created_at: str, tweet_id: str) -> str:
+    """Data ISO (YYYY-MM-DD) da created_at di X, da una data già ISO, o dallo snowflake."""
+    raw = created_at or ""
+    if raw:
+        try:
+            return datetime.strptime(raw, "%a %b %d %H:%M:%S %z %Y").date().isoformat()
+        except Exception:
+            pass
+        if len(raw) >= 10 and raw[4] == "-" and raw[7] == "-":
+            return raw[:10]
+    try:
+        snowflake_ms = (int(tweet_id) >> 22) + 1288834974657
+        return datetime.fromtimestamp(snowflake_ms / 1000, tz=timezone.utc).date().isoformat()
+    except Exception:
+        return datetime.now().strftime("%Y-%m-%d")
 
 
 class MarkdownExporter:
@@ -43,8 +60,7 @@ class MarkdownExporter:
         caso_d_uso = analysis.get("caso_d_uso", "")
         tags = [t.lstrip("#") for t in analysis.get("tag", [])]
         created_at = bookmark.get("created_at") or datetime.now().strftime("%Y-%m-%d")
-
-        date_prefix = created_at[:10] if len(created_at) >= 10 else datetime.now().strftime("%Y-%m-%d")
+        date_prefix = bookmark_iso_date(created_at, str(tweet_id))
         safe_title = sanitize_filename(title)
         filename = f"{date_prefix}_{sanitize_filename(author)}_{safe_title}_{tweet_id}.md"
         file_path = self.archive_dir / filename
