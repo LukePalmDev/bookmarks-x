@@ -1,5 +1,37 @@
 [
   {
+    "id": "2118774820293034437",
+    "title": "Introducing Lattice, a local LaTeX workspace for your resear",
+    "author": "Leonardo (@leoliuym)",
+    "screen_name": "leoliuym",
+    "category": "📌 Risorsa X",
+    "summary": "Introducing Lattice, a local LaTeX workspace for your research.\n\nA paper is more than a .tex file: the papers you cite, notes, slides, Overleaf co-authors and now an AI agent.\n\nI w",
+    "points": [],
+    "use_case": "",
+    "tags": [],
+    "url": "https://x.com/leoliuym/status/2118774820293034437",
+    "date": "6 Nov 2026",
+    "timestamp": 1793990256,
+    "text": "Introducing Lattice, a local LaTeX workspace for your research.\n\nA paper is more than a .tex file: the papers you cite, notes, slides, Overleaf co-authors and now an AI agent.\n\nI wanted it all in one app, so I built it.\n\nFree to download, open source:\nhttps://t.co/hnoC9AQ84m https://t.co/zNB1Ha3qfR",
+    "status": "failed_analysis"
+  },
+  {
+    "id": "2118683688959385914",
+    "title": "Andrej Karpathy doesn't use Notion, Obsidian plugins or any ",
+    "author": "slash1s (@slash1sol)",
+    "screen_name": "slash1sol",
+    "category": "📌 Risorsa X",
+    "summary": "Andrej Karpathy doesn't use Notion, Obsidian plugins or any notes app. \n\nHis second brain is a folder of markdown files, and he released a prompt that just turned that setup into s",
+    "points": [],
+    "use_case": "",
+    "tags": [],
+    "url": "https://x.com/slash1sol/status/2118683688959385914",
+    "date": "6 Nov 2026",
+    "timestamp": 1793968529,
+    "text": "Andrej Karpathy doesn't use Notion, Obsidian plugins or any notes app. \n\nHis second brain is a folder of markdown files, and he released a prompt that just turned that setup into something Opus 5.5 runs for you.\n\nThis is f*cking goldmine..\n\nSave the raw source before you touch it, one note per idea, every claim linked to where it came from, and a daily note under 20 lines that you actually open.\n\nThen the test: the vault has to answer your questions with no web and no memory, or the gap gets written down.\n\nSend it to Opus 5.5 and thank me later.\n\nThe full prompt and the full article are both below ↓",
+    "status": "failed_analysis"
+  },
+  {
     "id": "2116188727579918358",
     "title": "3D OS: sei dipartimenti e 80 skill open-source per agenti di coding 3D",
     "author": "Emm (@emmanuel_2m)",
