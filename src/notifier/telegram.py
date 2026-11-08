@@ -88,15 +88,18 @@ class TelegramNotifier:
                 with httpx.Client(timeout=30.0) as client:
                     res = client.post(url, data=data, files=files)
                     if res.status_code == 200:
-                        # Se il messaggio originale era molto lungo, invia il resto come testo
-                        if len(caption) > 1020:
-                            self.send_message(caption)
+                        # Una sola consegna. La didascalia è già troncata al limite Telegram:
+                        # un secondo sendMessage con lo stesso testo è il doppio invio immediato.
                         return True
                     logger.warning(f"Telegram sendPhoto failed: {res.status_code} - {res.text}")
+        except httpx.TransportError as e:
+            # Timeout o connessione interrotta: la foto può essere già stata accettata.
+            logger.warning(f"Telegram sendPhoto incerto, nessun secondo invio: {e}")
+            return False
         except Exception as e:
             logger.warning(f"Errore invio foto Telegram: {e}")
 
-        # Fallback a testo normale
+        # La foto è stata rifiutata in modo esplicito, oppure il file non era leggibile.
         return self.send_message(caption)
 
     def notify_bookmark(self, bookmark: Dict[str, Any]) -> bool:

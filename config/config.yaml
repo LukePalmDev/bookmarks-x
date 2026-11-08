@@ -2,7 +2,7 @@
 # Configurazione Bookmarks-X (Twitter Bookmark Sync & AI Analyzer)
 # ====================================================================
 
-engine: "claude" # Motore di analisi: 'claude' (consigliato, Claude CLI) o 'gemini'
+engine: "claude" # Produzione: 'claude'. 'ollama' è locale e opzionale. 'gemini' resta disponibile.
 
 x_account:
   cookie_source: "safari" # 'safari', 'auto', 'chrome', 'firefox', 'brave', 'edge' o 'env'
@@ -12,6 +12,26 @@ claude:
   # Modello predefinito per Claude CLI (come in prompt-x)
   model: "haiku"
   fallback_model: "sonnet"
+
+# Motore locale opzionale. Non è attivo finché `engine` resta "claude".
+# Tag verificato sul Mac mini (Ollama 0.40.14, già installato, nessun download):
+# gemma4:12b-it-q4_K_M. La qualità bookmarks non è la accuracy del classificatore Trader.
+ollama:
+  model: "gemma4:12b-it-q4_K_M"
+  base_url: "http://127.0.0.1:11434"
+  timeout_seconds: 120
+  max_attempts: 2
+  # Tetto misurato: num_ctx 4096 porta la RAM libera circa al 14% su 16GB.
+  # Il massimo di contesto del modello (262144) non va usato. Il client lo serra a 4096.
+  num_ctx: 4096
+  num_predict: 512
+  max_input_chars: 2000
+  temperature: 0
+  # ThinkValue dell'API chat accetta boolean. Il modello tiene il thinking acceso
+  # di default; false basta per questa estrazione e evita token extra in 4096.
+  think: false
+  # Un solo post per ciclo: Trader usa lo stesso Ollama e lo stesso modello.
+  max_per_cycle: 1
 
 gemini:
   model: "gemini-3.5-flash"

@@ -14,16 +14,52 @@ logger = logging.getLogger("bookmarks_x_claude")
 
 CLAUDE_WORKDIR = Path(tempfile.gettempdir()) / "bookmarksx-claude"
 
-ENV = {
-    key: value for key, value in os.environ.items()
-    if key != "CLAUDECODE" and (not key.startswith("CLAUDE_CODE_") or key == "CLAUDE_CODE_OAUTH_TOKEN")
-}
-ENV["PATH"] = os.pathsep.join([
-    str(Path(__file__).resolve().parent.parent.parent / ".venv" / "bin"),
-    str(Path.home() / ".local" / "bin"),
-    os.environ.get("PATH", ""),
-    "/opt/homebrew/bin", "/usr/local/bin", "/usr/bin", "/bin",
-])
+
+def build_claude_env(source: Optional[Dict[str, str]] = None) -> Dict[str, str]:
+    """Ambiente del subprocess CLI.
+
+    È uno snapshot: `main.py` importa questo modulo prima di `load_dotenv`,
+    quindi una chiave presente solo in `.env` non viene iniettata e non
+    scavalca il login Pro già verificato. Il PATH del LaunchAgent non include
+    `~/.local/bin`; lo aggiungiamo qui, prima di risolvere il binario.
+    """
+    base = os.environ if source is None else source
+    env = {
+        key: value
+        for key, value in base.items()
+        if key != "CLAUDECODE" and (not key.startswith("CLAUDE_CODE_") or key == "CLAUDE_CODE_OAUTH_TOKEN")
+    }
+    env["PATH"] = os.pathsep.join([
+        str(Path(__file__).resolve().parent.parent.parent / ".venv" / "bin"),
+        str(Path.home() / ".local" / "bin"),
+        str(base.get("PATH", "")),
+        "/opt/homebrew/bin",
+        "/usr/local/bin",
+        "/usr/bin",
+        "/bin",
+    ])
+    return env
+
+
+def cli_failure_detail(stderr: Optional[str], stdout: Optional[str], limit: int = 500) -> str:
+    """Testo utile quando la CLI esce non-zero.
+
+    Con `--output-format json` il motivo sta spesso su stdout e stderr è vuoto.
+    """
+    err = (stderr or "").strip()
+    out = (stdout or "").strip()
+    if err and out:
+        detail = f"{err} | stdout: {out}"
+    else:
+        detail = err or out
+    if not detail:
+        detail = "(stderr e stdout vuoti)"
+    if len(detail) > limit:
+        return detail[:limit] + "…"
+    return detail
+
+
+ENV = build_claude_env()
 
 CLAUDE_CMD = shutil.which("claude", path=ENV["PATH"]) or "claude"
 
@@ -125,10 +161,18 @@ class ClaudeAnalyzer:
         ]
 
         try:
-            res = subprocess.run(command, cwd=CLAUDE_WORKDIR, capture_output=True, text=True, timeout=30, env=ENV)
+            res = subprocess.run(
+                command,
+                cwd=CLAUDE_WORKDIR,
+                capture_output=True,
+                text=True,
+                timeout=30,
+                env=ENV,
+                stdin=subprocess.DEVNULL,
+            )
             if res.returncode == 0:
                 return True, f"Claude CLI funzionante ({self.model})"
-            return False, f"Errore Claude CLI: {res.stderr[:150]}"
+            return False, f"Errore Claude CLI: {cli_failure_detail(res.stderr, res.stdout, limit=300)}"
         except Exception as e:
             return False, str(e)
 
@@ -154,12 +198,15 @@ class ClaudeAnalyzer:
                 text=True,
                 timeout=CLAUDE_TIMEOUT,
                 env=ENV,
+                stdin=subprocess.DEVNULL,
             )
         except subprocess.TimeoutExpired:
             raise RuntimeError(f"Claude CLI timeout ({CLAUDE_TIMEOUT}s)")
 
         if res.returncode != 0:
-            raise RuntimeError(f"Claude CLI exit {res.returncode}: {res.stderr.strip()}")
+            raise RuntimeError(
+                f"Claude CLI exit {res.returncode}: {cli_failure_detail(res.stderr, res.stdout)}"
+            )
 
         try:
             data = json.loads(res.stdout or "{}")
