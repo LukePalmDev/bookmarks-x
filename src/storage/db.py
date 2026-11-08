@@ -207,3 +207,37 @@ class Database:
                 "pending": pending,
                 "failed": failed,
             }
+
+
+QUEUE_STATUSES = ("analyzed", "pending_analysis", "failed_analysis")
+
+
+def read_queue_counts(db_path: Path) -> Dict[str, int]:
+    """Conteggi per stato, in sola lettura. Nessun testo e nessuna credenziale."""
+    path = Path(db_path)
+    if not path.is_file():
+        raise FileNotFoundError(path.name)
+    uri = path.resolve().as_uri() + "?mode=ro"
+    conn = sqlite3.connect(uri, uri=True)
+    try:
+        conn.execute("PRAGMA query_only=ON;")
+        rows = conn.execute("SELECT status, COUNT(*) FROM bookmarks GROUP BY status;").fetchall()
+    finally:
+        conn.close()
+    counts = {name: 0 for name in QUEUE_STATUSES}
+    other = 0
+    total = 0
+    for status, count in rows:
+        total += int(count)
+        if status in counts:
+            counts[str(status)] = int(count)
+        else:
+            other += int(count)
+    counts["other"] = other
+    counts["total"] = total
+    return counts
+
+
+def format_queue_counts(counts: Dict[str, int]) -> str:
+    keys = ("analyzed", "pending_analysis", "failed_analysis", "other", "total")
+    return "\n".join(f"{key}={int(counts.get(key, 0))}" for key in keys)

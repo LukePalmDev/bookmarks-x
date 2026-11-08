@@ -234,6 +234,28 @@ async def cmd_analyze_pending():
     console.print("\n[bold green]Analisi completata con successo![/bold green]")
 
 
+def cmd_ollama_smoke() -> int:
+    """Una inferenza sintetica. Non apre il database, Telegram o X."""
+    from src.analyzer.ollama import OllamaAnalyzer, format_smoke_report
+
+    report = OllamaAnalyzer().synthetic_smoke()
+    console.print(format_smoke_report(report))
+    return int(report["exit_code"])
+
+
+def cmd_queue() -> int:
+    """Stampa solo i conteggi della coda. Non stampa testi né credenziali."""
+    from src.storage.db import format_queue_counts, read_queue_counts
+
+    try:
+        counts = read_queue_counts(config.db_path)
+    except Exception as exc:
+        console.print(f"queue_error={type(exc).__name__}")
+        return 1
+    console.print(format_queue_counts(counts))
+    return 0
+
+
 def cmd_test():
     print_header()
     console.print("[bold]Diagnostica di Sistema[/bold]\n")
@@ -504,6 +526,15 @@ def main():
     # test
     subparsers.add_parser("test", help="Verifica connessioni a X, Gemini e stato locale")
 
+    subparsers.add_parser(
+        "ollama-smoke",
+        help="Una inferenza Ollama sintetica, senza database, Telegram o X",
+    )
+    subparsers.add_parser(
+        "queue",
+        help="Conteggi di sola lettura della coda (nessun testo dei post)",
+    )
+
     # export
     export_p = subparsers.add_parser("export", help="Esporta i segnalibri")
     export_p.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Formato esportazione")
@@ -554,6 +585,10 @@ def main():
         asyncio.run(cmd_analyze_pending())
     elif args.command == "test":
         cmd_test()
+    elif args.command == "ollama-smoke":
+        sys.exit(cmd_ollama_smoke())
+    elif args.command == "queue":
+        sys.exit(cmd_queue())
     elif args.command == "export":
         cmd_export(output_format=args.format)
     elif args.command == "set-telegram":
