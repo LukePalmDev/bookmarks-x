@@ -52,19 +52,30 @@
   },
   {
     "id": "2118683688959385914",
-    "title": "Andrej Karpathy doesn't use Notion, Obsidian plugins or any ",
+    "title": "Il metodo di gestione della conoscenza di Andrej Karpathy con file Markdown",
     "author": "slash1s (@slash1sol)",
     "screen_name": "slash1sol",
-    "category": "📌 Risorsa X",
-    "summary": "Andrej Karpathy doesn't use Notion, Obsidian plugins or any notes app. \n\nHis second brain is a folder of markdown files, and he released a prompt that just turned that setup into s",
-    "points": [],
-    "use_case": "",
-    "tags": [],
+    "category": "💡 Prompt & Guide",
+    "summary": "Il post rivela come Andrej Karpathy organizza la propria 'seconda mente' usando semplici file Markdown e un prompt specifico per interrogarli tramite Opus 5.5.",
+    "points": [
+      "Utilizzo di file Markdown puri invece di app complesse come Notion o Obsidian.",
+      "Struttura basata su una nota per idea con link alle fonti originali.",
+      "Creazione di note giornaliere brevi e concise.",
+      "Test di validazione del vault per garantire risposte accurate senza accesso web."
+    ],
+    "use_case": "Ottimizzare la gestione della conoscenza personale e la ricerca di informazioni tramite prompt strutturati su file locali.",
+    "tags": [
+      "#karpathy",
+      "#markdown",
+      "#knowledgemanagement",
+      "#promptengineering",
+      "#secondbrain"
+    ],
     "url": "https://x.com/slash1sol/status/2118683688959385914",
     "date": "6 Nov 2026",
     "timestamp": 1793968529,
     "text": "Andrej Karpathy doesn't use Notion, Obsidian plugins or any notes app. \n\nHis second brain is a folder of markdown files, and he released a prompt that just turned that setup into something Opus 5.5 runs for you.\n\nThis is f*cking goldmine..\n\nSave the raw source before you touch it, one note per idea, every claim linked to where it came from, and a daily note under 20 lines that you actually open.\n\nThen the test: the vault has to answer your questions with no web and no memory, or the gap gets written down.\n\nSend it to Opus 5.5 and thank me later.\n\nThe full prompt and the full article are both below ↓",
-    "status": "failed_analysis"
+    "status": "analyzed"
   },
   {
     "id": "2116188727579918358",
