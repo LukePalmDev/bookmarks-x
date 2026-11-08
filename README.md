@@ -113,6 +113,31 @@ tail -f logs/service.log
 .venv/bin/python install-service.py --uninstall
 ```
 
+Non riavviare `com.user.x-gemini-bookmarks` solo per leggere queste note. Il processo già in memoria continua a usare il codice con cui è partito.
+
+---
+
+## Motore locale Ollama (opzionale)
+
+Il default resta **Claude** (`engine: "claude"`). Ollama non parte e non sostituisce Claude finché non imposti `engine: "ollama"`.
+
+Tag già presente sul Mac mini, Ollama 0.40.14, nessun download:
+
+`gemma4:12b-it-q4_K_M`
+
+È lo stesso modello del classificatore videogiochi di Trader. Quella accuracy non valida l'analisi dei bookmark. Trader e bookmarks condividono `127.0.0.1:11434`: questo client non cambia le impostazioni globali di Ollama, manda una richiesta alla volta e al massimo un post per ciclo. `num_ctx` è serrato a **4096** (contesto misurato sui 16GB; il massimo del modello, 262144, non va usato). `think: false` è supportato dall'API (`ThinkValue` booleano) e spegne il thinking, che su questo modello è acceso di default.
+
+`python main.py test` con `ANALYZER_ENGINE=ollama` interroga solo `GET /api/tags`. Non genera token.
+
+Prova sintetica, in un checkout separato, senza toccare il database di produzione e senza Telegram:
+
+```bash
+TELEGRAM_ENABLED=false ANALYZER_ENGINE=ollama \
+  .venv/bin/python -c "from src.analyzer.ollama import OllamaAnalyzer; print(OllamaAnalyzer().test_connection())"
+```
+
+Una generazione di prova, solo quando Trader non sta inferendo, è un passo successivo e va fatto a mano. Non usare il database del servizio in esecuzione.
+
 ---
 
 ## 🧩 Come Personalizzare l'Analisi in Futuro

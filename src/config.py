@@ -70,6 +70,59 @@ class AppConfig:
     def claude_fallback_model(self) -> str:
         return self._raw_config.get("claude", {}).get("fallback_model", "sonnet")
 
+    # --- Ollama locale (opzionale; il default di produzione resta claude) ---
+    @property
+    def ollama_model(self) -> str:
+        return os.environ.get("OLLAMA_MODEL") or str(self._raw_config.get("ollama", {}).get("model") or "")
+
+    @property
+    def ollama_base_url(self) -> str:
+        return os.environ.get("OLLAMA_BASE_URL") or str(
+            self._raw_config.get("ollama", {}).get("base_url") or "http://127.0.0.1:11434"
+        )
+
+    @property
+    def ollama_timeout_seconds(self) -> int:
+        raw = os.environ.get("OLLAMA_TIMEOUT")
+        if raw is not None:
+            return int(raw)
+        return int(self._raw_config.get("ollama", {}).get("timeout_seconds", 120))
+
+    @property
+    def ollama_max_attempts(self) -> int:
+        return max(1, int(self._raw_config.get("ollama", {}).get("max_attempts", 2)))
+
+    @property
+    def ollama_num_ctx(self) -> int:
+        raw = os.environ.get("OLLAMA_NUM_CTX")
+        if raw is not None:
+            return int(raw)
+        return int(self._raw_config.get("ollama", {}).get("num_ctx", 4096))
+
+    @property
+    def ollama_num_predict(self) -> int:
+        return int(self._raw_config.get("ollama", {}).get("num_predict", 512))
+
+    @property
+    def ollama_max_input_chars(self) -> int:
+        return int(self._raw_config.get("ollama", {}).get("max_input_chars", 2000))
+
+    @property
+    def ollama_temperature(self) -> float:
+        return float(self._raw_config.get("ollama", {}).get("temperature", 0))
+
+    @property
+    def ollama_think(self) -> bool:
+        """False disattiva il thinking. L'API accetta bool; il modello lo tiene acceso di default."""
+        val = os.environ.get("OLLAMA_THINK")
+        if val is not None:
+            return val.lower() in ("1", "true", "yes")
+        return bool(self._raw_config.get("ollama", {}).get("think", False))
+
+    @property
+    def ollama_max_per_cycle(self) -> int:
+        return max(1, int(self._raw_config.get("ollama", {}).get("max_per_cycle", 1)))
+
     # --- Sezione Gemini ---
     @property
     def gemini_api_key(self) -> str | None:
@@ -137,6 +190,13 @@ class AppConfig:
         if val is not None:
             return val.lower() in ("1", "true", "yes")
         return bool(self._raw_config.get("telegram", {}).get("send_photos", True))
+
+    @property
+    def telegram_notify_on_new(self) -> bool:
+        val = os.environ.get("TELEGRAM_NOTIFY")
+        if val is not None:
+            return val.lower() in ("1", "true", "yes")
+        return bool(self._raw_config.get("telegram", {}).get("notify_on_new_bookmark", True))
 
 
 # Singleton globale di configurazione

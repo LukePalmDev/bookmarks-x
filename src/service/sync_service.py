@@ -7,7 +7,6 @@ import subprocess
 from typing import Any, Callable, Dict, Optional
 
 from src.analyzer.claude import ClaudeAnalyzer
-from src.analyzer.gemini import GeminiAnalyzer
 from src.config import BASE_DIR, config
 from src.notifier.telegram import TelegramNotifier
 from src.storage.db import Database
@@ -18,10 +17,35 @@ from src.x_client.client import XBookmarksClient
 logger = logging.getLogger("bookmarks_x_sync")
 
 
+def watch_cycle_counts(stats: Dict[str, Any]) -> tuple[int, int]:
+    """(nuovi, analizzati) senza KeyError se il ciclo è un mirror.
+
+    Il mirror storico espone ``analyzed`` e non ``analyzed_by_gemini``.
+    """
+
+    def as_int(value: Any) -> int:
+        try:
+            return int(value or 0)
+        except (TypeError, ValueError):
+            return 0
+
+    new_saved = as_int(stats.get("new_saved"))
+    if "analyzed_by_gemini" in stats:
+        analyzed = as_int(stats.get("analyzed_by_gemini"))
+    else:
+        analyzed = as_int(stats.get("analyzed"))
+    return new_saved, analyzed
+
+
 def get_default_analyzer():
-    """Restituisce il motore di analisi configurato ('claude' come in prompt-x o 'gemini')."""
-    if config.analyzer_engine == "claude":
+    """Motore configurato. ``ollama`` non ricade mai su Claude."""
+    engine = (config.analyzer_engine or "claude").strip().lower()
+    if engine == "ollama":
+        from src.analyzer.ollama import OllamaAnalyzer
+        return OllamaAnalyzer()
+    if engine == "claude":
         return ClaudeAnalyzer(model=config.claude_model)
+    from src.analyzer.gemini import GeminiAnalyzer
     return GeminiAnalyzer()
 
 
@@ -72,6 +96,87 @@ class SyncService:
         self.media_downloader = media_downloader or MediaDownloader()
         self.markdown_exporter = markdown_exporter or MarkdownExporter()
         self.notifier = notifier or TelegramNotifier()
+
+    def _should_notify(self) -> bool:
+        return bool(
+            config.telegram_notify_on_new
+            and self.notifier is not None
+            and self.notifier.is_configured()
+        )
+
+    async def _analyze_pending(
+        self,
+        stats: Dict[str, Any],
+        counter_keys: tuple[str, ...],
+        progress_callback: Optional[Callable[[str, int, int], None]] = None,
+    ) -> bool:
+        """Analizza i pendenti. Un fallimento della notifica non rimette il post in coda.
+
+        L'analisi riuscita è già committata: un secondo ciclo non rinvia Telegram.
+        ``stop_cycle`` (Ollama sovraccarico) interrompe il batch senza segnare successi.
+        """
+        pending = self.db.get_pending_analysis(limit=100)
+        can_analyze = bool(self.analyzer.is_configured())
+        if not pending:
+            return can_analyze
+        if not can_analyze:
+            logger.warning("Analisi sospesa: motore %s non configurato", config.analyzer_engine)
+            return False
+
+        limit = getattr(self.analyzer, "max_per_cycle", None)
+        started = 0
+        label = f"Analisi con {config.analyzer_engine.capitalize()}"
+        for idx, item in enumerate(pending):
+            if limit is not None and started >= int(limit):
+                logger.info(
+                    "Limite ciclo raggiunto (%s). Gli altri post restano in coda, senza notifica.",
+                    limit,
+                )
+                break
+            started += 1
+            t_id = item["tweet_id"]
+            try:
+                res = self.analyzer.analyze_tweet(item)
+            except Exception as exc:
+                self.db.update_analysis_failure(t_id, str(exc))
+                stats["analysis_errors"] = int(stats.get("analysis_errors") or 0) + 1
+                logger.warning("Analisi fallita per %s: %s", t_id, exc)
+                if progress_callback:
+                    progress_callback(label, idx + 1, len(pending))
+                if getattr(exc, "stop_cycle", False):
+                    logger.warning("Ciclo di analisi interrotto per non sovraccaricare il motore locale")
+                    break
+                continue
+
+            author = res.get("autore", item.get("author_screen_name", ""))
+            title = res.get("titolo", "Post X")
+            self.db.update_analysis_success(t_id, author, title, res)
+            for key in counter_keys:
+                stats[key] = int(stats.get(key) or 0) + 1
+            item["gemini_author"] = author
+            item["gemini_title"] = title
+            item["gemini_analysis_json"] = res
+
+            if config.export_markdown:
+                try:
+                    self.markdown_exporter.export_bookmark(item)
+                except Exception as exc:
+                    logger.warning("Export Markdown fallito per %s: %s", t_id, exc)
+
+            if self._should_notify():
+                try:
+                    self.notifier.notify_bookmark(item)
+                except Exception as exc:
+                    logger.warning(
+                        "Notifica non inviata per %s e non verrà ripetuta: %s",
+                        t_id,
+                        exc,
+                    )
+
+            if progress_callback:
+                progress_callback(label, idx + 1, len(pending))
+            await asyncio.sleep(1.5)
+        return can_analyze
 
     def delete_bookmark_fully(self, tweet_id: str) -> bool:
         """Rimuove completamente un post da:
@@ -143,39 +248,11 @@ class SyncService:
             if progress_callback:
                 progress_callback("Archiviazione post", idx + 1, len(raw_tweets))
 
-        # 3. Analisi dei post pendenti
-        pending = self.db.get_pending_analysis(limit=100)
-        can_analyze = self.analyzer.is_configured()
-
-        if pending and can_analyze:
-            for idx, item in enumerate(pending):
-                t_id = item["tweet_id"]
-                try:
-                    res = self.analyzer.analyze_tweet(item)
-                    author = res.get("autore", item.get("author_screen_name", ""))
-                    title = res.get("titolo", "Post X")
-                    self.db.update_analysis_success(t_id, author, title, res)
-                    stats["analyzed_by_gemini"] += 1
-
-                    # Aggiorna record per l'esportazione Markdown
-                    item["gemini_author"] = author
-                    item["gemini_title"] = title
-                    item["gemini_analysis_json"] = res
-
-                    if config.export_markdown:
-                        self.markdown_exporter.export_bookmark(item)
-
-                    if self.notifier.is_configured():
-                        self.notifier.notify_bookmark(item)
-
-                    await asyncio.sleep(1.5)
-
-                except Exception as exc:
-                    self.db.update_analysis_failure(t_id, str(exc))
-                    stats["analysis_errors"] += 1
-
-                if progress_callback:
-                    progress_callback(f"Analisi con {config.analyzer_engine.capitalize()}", idx + 1, len(pending))
+        can_analyze = await self._analyze_pending(
+            stats,
+            ("analyzed_by_gemini",),
+            progress_callback,
+        )
 
         stats["total_in_db"] = self.db.get_stats()["total"]
         stats["analyzer_configured"] = can_analyze
@@ -210,6 +287,8 @@ class SyncService:
             "deleted_removed": 0,
             "media_downloaded": 0,
             "analyzed": 0,
+            "analyzed_by_gemini": 0,
+            "analysis_errors": 0,
             "total_in_db": 0,
             "scan_complete": False,
         }
@@ -255,36 +334,11 @@ class SyncService:
         else:
             logger.warning("Scansione X parziale: rimozione post sospesa per precauzione.")
 
-        # Analisi post pendenti
-        pending = self.db.get_pending_analysis(limit=100)
-        can_analyze = self.analyzer.is_configured()
-
-        if pending and can_analyze:
-            for idx, item in enumerate(pending):
-                t_id = item["tweet_id"]
-                try:
-                    res = self.analyzer.analyze_tweet(item)
-                    author = res.get("autore", item.get("author_screen_name", ""))
-                    title = res.get("titolo", "Post X")
-                    self.db.update_analysis_success(t_id, author, title, res)
-                    stats["analyzed"] += 1
-
-                    item["gemini_author"] = author
-                    item["gemini_title"] = title
-                    item["gemini_analysis_json"] = res
-
-                    if config.export_markdown:
-                        self.markdown_exporter.export_bookmark(item)
-
-                    if self.notifier.is_configured():
-                        self.notifier.notify_bookmark(item)
-
-                    await asyncio.sleep(1.5)
-                except Exception as exc:
-                    self.db.update_analysis_failure(t_id, str(exc))
-
-                if progress_callback:
-                    progress_callback(f"Analisi con {config.analyzer_engine.capitalize()}", idx + 1, len(pending))
+        await self._analyze_pending(
+            stats,
+            ("analyzed", "analyzed_by_gemini"),
+            progress_callback,
+        )
 
         stats["total_in_db"] = self.db.get_stats()["total"]
 
@@ -345,12 +399,20 @@ class SyncService:
         if not targets:
             return stats
 
-        sem = asyncio.Semaphore(concurrency)
+        # La reanalisi non invia Telegram. Con Ollama un solo worker: stessa GPU di Trader.
+        if getattr(self.analyzer, "single_flight", False):
+            concurrency = 1
+        sem = asyncio.Semaphore(max(1, concurrency))
         lock = asyncio.Lock()
+        stop = asyncio.Event()
 
         async def worker(item: Dict[str, Any]):
+            if stop.is_set():
+                return
             t_id = item["tweet_id"]
             async with sem:
+                if stop.is_set():
+                    return
                 try:
                     res = await asyncio.to_thread(self.analyzer.analyze_tweet, item)
                     author = res.get("autore", item.get("author_screen_name", ""))
@@ -369,9 +431,15 @@ class SyncService:
                     logger.warning(f"Errore reanalisi post {t_id}: {exc}")
                     async with lock:
                         stats["errors"] += 1
+                        if getattr(exc, "stop_cycle", False):
+                            stop.set()
 
                 if progress_callback:
-                    progress_callback("Reanalisi post con Claude CLI", stats["completed"] + stats["errors"], len(targets))
+                    progress_callback(
+                        f"Reanalisi con {config.analyzer_engine}",
+                        stats["completed"] + stats["errors"],
+                        len(targets),
+                    )
 
         tasks = [worker(t) for t in targets]
         await asyncio.gather(*tasks)

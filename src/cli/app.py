@@ -14,18 +14,32 @@ from rich.table import Table
 from rich.text import Text
 
 from src.analyzer.claude import ClaudeAnalyzer
-from src.analyzer.gemini import GeminiAnalyzer
 from src.auth.x_auth import XAuthManager
 from src.config import BASE_DIR, config
-from src.service.sync_service import SyncService, get_default_analyzer
+from src.service.sync_service import SyncService, get_default_analyzer, watch_cycle_counts
 from src.storage.db import Database
 from src.storage.markdown_exporter import MarkdownExporter
 
 console = Console()
 
 
+def describe_watch_cycle(stats) -> str:
+    """Testo del ciclo watch. Non assume la chiave ``analyzed_by_gemini``."""
+    new_saved, analyzed = watch_cycle_counts(stats)
+    total = stats.get("total_in_db", "?")
+    if new_saved > 0 or analyzed > 0:
+        return f"Nuovi: {new_saved} | Analizzati: {analyzed} | Totale DB: {total}"
+    return "Nessun nuovo segnalibro salvato."
+
+
 def print_header():
-    engine_name = "Claude CLI" if config.analyzer_engine == "claude" else f"Gemini ({config.gemini_model})"
+    engine = (config.analyzer_engine or "").strip().lower()
+    if engine == "claude":
+        engine_name = "Claude CLI"
+    elif engine == "ollama":
+        engine_name = f"Ollama ({config.ollama_model or 'modello non impostato'})"
+    else:
+        engine_name = f"Gemini ({config.gemini_model})"
     console.print(
         Panel.fit(
             f"[bold cyan]Bookmarks-X[/bold cyan] — [dim]Sincronizzazione X e Analisi AI ({engine_name})[/dim]",
@@ -64,19 +78,26 @@ async def cmd_sync(fetch_all: bool = False):
     table.add_row("Segnalibri trovati su X", str(stats["fetched_from_x"]))
     table.add_row("Nuovi post archiviati", f"[green]{stats['new_saved']}[/green]")
     table.add_row("Media scaricati", str(stats["media_downloaded"]))
-    table.add_row("Post analizzati con Gemini", f"[bold cyan]{stats['analyzed_by_gemini']}[/bold cyan]")
-    if stats["analysis_errors"] > 0:
+    _new, analyzed = watch_cycle_counts(stats)
+    table.add_row("Post analizzati", f"[bold cyan]{analyzed}[/bold cyan]")
+    if stats.get("analysis_errors", 0) > 0:
         table.add_row("Errori di analisi", f"[red]{stats['analysis_errors']}[/red]")
     table.add_row("Totale post nel database", str(stats["total_in_db"]))
 
     console.print(table)
 
-    if not stats["gemini_configured"]:
-        console.print(
-            "\n[yellow]⚠️ Nota su Gemini:[/yellow] La chiave `GEMINI_API_KEY` non è ancora presente nel file `.env`.\n"
-            "I post sono stati scaricati e memorizzati localmente. Quando inserirai la chiave API,\n"
-            "puoi eseguire `python main.py analyze-pending` per analizzarli tutti in automatico!"
-        )
+    if not stats.get("analyzer_configured", True):
+        if (config.analyzer_engine or "").strip().lower() == "gemini":
+            console.print(
+                "\n[yellow]⚠️ Nota su Gemini:[/yellow] La chiave `GEMINI_API_KEY` non è ancora presente nel file `.env`.\n"
+                "I post sono stati scaricati e memorizzati localmente. Quando inserirai la chiave API,\n"
+                "puoi eseguire `python main.py analyze-pending` per analizzarli tutti in automatico!"
+            )
+        else:
+            console.print(
+                f"\n[yellow]⚠️ Motore {config.analyzer_engine} non configurato.[/yellow] "
+                "I post restano in coda, senza notifica Telegram."
+            )
 
 
 async def cmd_watch(interval: Optional[int] = None):
@@ -91,12 +112,11 @@ async def cmd_watch(interval: Optional[int] = None):
 
     def on_cycle(stats):
         now = datetime.now().strftime("%H:%M:%S")
-        if stats["new_saved"] > 0 or stats["analyzed_by_gemini"] > 0:
-            console.print(
-                f"[{now}] [green]✓[/green] Nuovi: [bold]{stats['new_saved']}[/bold] | Analizzati: [cyan]{stats['analyzed_by_gemini']}[/cyan] | Totale DB: {stats['total_in_db']}"
-            )
+        line = describe_watch_cycle(stats)
+        if line.startswith("Nessun nuovo"):
+            console.print(f"[{now}] [dim]{line} In attesa del prossimo controllo...[/dim]")
         else:
-            console.print(f"[{now}] [dim]Nessun nuovo segnalibro salvato. In attesa del prossimo controllo...[/dim]")
+            console.print(f"[{now}] [green]✓[/green] {line}")
 
     try:
         await sync_service.run_watch_loop(interval_seconds=interval_sec, on_cycle_complete=on_cycle)
@@ -187,25 +207,29 @@ async def cmd_analyze_pending():
         console.print(f"[{idx}/{len(pending)}] Analisi post {t_id} ({author_hint})...", end=" ")
         try:
             res = analyzer.analyze_tweet(item)
-            author = res.get("autore", author_hint)
-            title = res.get("titolo", "Post X")
-            db.update_analysis_success(t_id, author, title, res)
-
-            item["gemini_author"] = author
-            item["gemini_title"] = title
-            item["gemini_analysis_json"] = res
-            if config.export_markdown:
-                exporter.export_bookmark(item)
-
-            if notifier.is_configured():
-                notifier.notify_bookmark(item)
-
-            console.print(f"[green]✓ Fatto:[/green] [bold]{title}[/bold]")
-            # Con Claude CLI pausa breve di 2s
-            await asyncio.sleep(2.0)
         except Exception as exc:
             db.update_analysis_failure(t_id, str(exc))
             console.print(f"[red]✗ Fallito:[/red] {exc}")
+            continue
+
+        author = res.get("autore", author_hint)
+        title = res.get("titolo", "Post X")
+        db.update_analysis_success(t_id, author, title, res)
+        item["gemini_author"] = author
+        item["gemini_title"] = title
+        item["gemini_analysis_json"] = res
+        if config.export_markdown:
+            try:
+                exporter.export_bookmark(item)
+            except Exception as exc:
+                console.print(f"[yellow]Export non riuscito:[/yellow] {exc}")
+        if config.telegram_notify_on_new and notifier.is_configured():
+            try:
+                notifier.notify_bookmark(item)
+            except Exception as exc:
+                console.print(f"[yellow]Notifica non inviata (nessun retry):[/yellow] {exc}")
+        console.print(f"[green]✓ Fatto:[/green] [bold]{title}[/bold]")
+        await asyncio.sleep(2.0)
 
     console.print("\n[bold green]Analisi completata con successo![/bold green]")
 
@@ -226,8 +250,9 @@ def cmd_test():
     except Exception as e:
         console.print(f"[red]✗ Errore:[/red] {e}")
 
-    # 2. Test Motore di Analisi (Claude CLI o Gemini)
-    if config.analyzer_engine == "claude":
+    # 2. Test Motore di Analisi (Claude CLI, Ollama locale o Gemini)
+    engine = (config.analyzer_engine or "").strip().lower()
+    if engine == "claude":
         console.print(f"2. Verifica Claude CLI ({config.claude_model})...", end=" ")
         analyzer = ClaudeAnalyzer(model=config.claude_model)
         valid_claude, claude_info = analyzer.test_connection()
@@ -235,7 +260,17 @@ def cmd_test():
             console.print(f"[green]✓ OK[/green] ({claude_info})")
         else:
             console.print(f"[red]✗ Fallito[/red] ({claude_info})")
+    elif engine == "ollama":
+        from src.analyzer.ollama import OllamaAnalyzer
+        console.print(f"2. Verifica Ollama locale ({config.ollama_model})...", end=" ")
+        analyzer = OllamaAnalyzer()
+        valid_ollama, ollama_info = analyzer.test_connection()
+        if valid_ollama:
+            console.print(f"[green]✓ OK[/green] ({ollama_info})")
+        else:
+            console.print(f"[red]✗ Fallito[/red] ({ollama_info})")
     else:
+        from src.analyzer.gemini import GeminiAnalyzer
         console.print(f"2. Verifica Google Gemini ({config.gemini_model})...", end=" ")
         analyzer = GeminiAnalyzer()
         valid_gemini, gemini_info = analyzer.test_connection()
