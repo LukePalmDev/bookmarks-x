@@ -106,6 +106,15 @@ async def cmd_watch(interval: Optional[int] = None):
     console.print(
         f"[green]Modalità Watch attiva:[/green] controllo continuo dei nuovi segnalibri ogni [bold]{interval_sec}[/bold] secondi."
     )
+    console.print(
+        f"[dim]Motore:[/dim] {config.analyzer_engine} ({config.analyzer_engine_source}); "
+        f"Claude {config.claude_model} ({config.claude_model_source}), effort {config.claude_effort}."
+    )
+    if config.analyzer_engine_source.startswith("env:") and config.analyzer_engine != "claude":
+        console.print(
+            "[yellow]ANALYZER_ENGINE nel ambiente ha precedenza su config.yaml. "
+            "Per tornare a Sonnet serve ANALYZER_ENGINE=claude, oppure togliere la variabile, e un restart.[/yellow]"
+        )
     console.print("[dim]Premi CTRL+C per arrestare il demone in qualsiasi momento.[/dim]\n")
 
     sync_service = SyncService()

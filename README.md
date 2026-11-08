@@ -117,9 +117,11 @@ Non riavviare `com.user.x-gemini-bookmarks` solo per leggere queste note. Il pro
 
 ---
 
-## Motore locale Ollama (opzionale)
+Il default di questo file è **Claude Sonnet 5.5** (`claude-sonnet-5-5`, effort `high`). L'alias `sonnet` sulla documentazione Claude Code punta a Sonnet 5.5 sull'API Anthropic; qui si usa l'ID completo, così la versione non cambia da sola. Serve Claude Code **2.1.284 o successivo** (sul mini è la 2.1.317). Il thinking di Sonnet 5.5 non si può spegnere. Non c'è `--fallback-model` e non si passa a Haiku.
 
-Il default resta **Claude**. La chiave è `engine` in [`config/config.yaml`](config/config.yaml). Oggi è `engine: "claude"`. Il tag locale è nella stessa file, sotto `ollama.model`:
+`ANALYZER_ENGINE` e `CLAUDE_MODEL` nel processo, incluso il file `.env`, hanno precedenza sul yaml. Se `.env` contiene `ANALYZER_ENGINE=ollama`, il servizio resta su Ollama anche con `engine: "claude"`. Il watch lo stampa all'avvio.
+
+## Motore locale Ollama (opzionale, spento)
 
 `gemma4:12b-it-q4_K_M`
 
@@ -153,25 +155,34 @@ Ignora `engine`. Una sola `POST /api/chat` su un testo fisso nel codice. Non apr
 
 Codici: `0` schema valido, `1` modello o URL non locali, `2` timeout o Ollama occupato, `3` JSON troncato o schema rifiutato. Se esce `2`, Trader sta usando la GPU: non c'è nulla da riavviare, si riprova più tardi.
 
-`main.py test` continua a non generare token.
+`main.py test` con motore Claude fa una chiamata vera. Durante una pausa quota non va lanciato. `queue` non chiama Claude.
 
-### Svuotare `failed_analysis` senza rinotificare gli `analyzed`
+### Ripristino Sonnet, senza rinotificare gli `analyzed`
 
-Farlo solo dopo uno smoke con `exit=0`. Fino a quel momento non cambiare `engine` e non riavviare il servizio.
+I conteggi delle 04:56 (111 analizzati, 1 failed) non sono lo stato attuale: main ha altri sync dopo. Prima:
 
-1. `.venv/bin/python main.py queue` e annotare `analyzed` e `failed_analysis`.
-2. In `config/config.yaml` impostare `engine: "ollama"`. Lasciare `ollama.model`, `num_ctx: 4096` e `think: false` come sono.
-3. Riavvio supportato, ricarica `main.py watch` e non cancella il database:
+```bash
+.venv/bin/python main.py queue
+```
+
+Quando questo codice è nel checkout del servizio:
+
+1. Nel `.env`, `ANALYZER_ENGINE=claude` oppure cancella la riga. Se resta `ollama`, il yaml viene ignorato.
+2. Non impostare `CLAUDE_MODEL`. `config/config.yaml` ha `claude.model: claude-sonnet-5-5` e `claude.effort: high`.
+3. `claude --version` deve essere almeno 2.1.284. È un controllo locale, non un prompt.
+4. Riavvio supportato, non cancella il database e non tocca Ollama:
 
 ```bash
 .venv/bin/python install-service.py --restart
 ```
 
-È `launchctl kickstart -k` su `com.user.x-gemini-bookmarks`. Non cambia Ollama.
+È `launchctl kickstart -k` su `com.user.x-gemini-bookmarks`.
 
-4. Il watch prende solo `pending_analysis` e `failed_analysis`, uno per ciclo. Gli `analyzed` non vengono riletti e non ricevono un secondo Telegram. Ogni failed che riesce riceve una sola scheda, la prima.
-5. `.venv/bin/python main.py queue` di nuovo. `failed_analysis` scende e `analyzed` sale dei soli successi. Il valore iniziale di `analyzed` non corrisponde a nuovi invii.
-6. Non usare `reanalyze` per questo svuotamento: percorrerebbe la coda tutta di seguito sulla stessa GPU di Trader.
+5. Il watch analizza solo `pending_analysis` e `failed_analysis`. Gli `analyzed` non ricevono un secondo Telegram. Un failed che riesce riceve una scheda, con i token misurati e «Finestra 5h Pro: non disponibile».
+6. Se la CLI risponde con il limite settimanale o con la finestra di 5 ore, il servizio scrive `data/claude_quota_pause.json` e non richiama Claude fino alla ripresa. Senza un giorno nel messaggio, il settimanale attende 7 giorni alle 06:00 Europe/Rome (orario riportato per questo account, non una regola di tutti i piani). La finestra di 5 ore, se manca l'orario, attende 5 ore. Non è una rianalisi degli `analyzed`.
+7. `.venv/bin/python main.py queue` di nuovo. `analyzed` sale solo dei nuovi successi.
+
+Non usare `reanalyze`. Il motore Claude non chiama Ollama, quindi Trader non va fermato.
 
 Non riavviare `com.user.x-gemini-bookmarks` solo per leggere queste note. Il processo già in memoria continua a usare il codice con cui è partito.
 
