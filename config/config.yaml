@@ -9,9 +9,15 @@ x_account:
   batch_size: 20
 
 claude:
-  # Modello predefinito per Claude CLI (come in prompt-x)
-  model: "haiku"
-  fallback_model: "sonnet"
+  # ID pinnato verificato (non l'alias "sonnet"): Claude Sonnet 5.5.
+  # https://code.claude.com/docs/en/model-config
+  # https://docs.anthropic.com/en/docs/about-claude/models/overview
+  # CLI >= 2.1.284. Sul mini: 2.1.317. Nessun --fallback-model.
+  model: "claude-sonnet-5-5"
+  effort: "high"
+  # Orario riportato per il reset settimanale di questo account, non un default Anthropic.
+  weekly_reset_time: "06:00"
+  weekly_reset_tz: "Europe/Rome"
 
 # Motore locale opzionale. Non è attivo finché `engine` resta "claude".
 # Tag verificato sul Mac mini (Ollama 0.40.14, già installato, nessun download):

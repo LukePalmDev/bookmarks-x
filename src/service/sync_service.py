@@ -6,7 +6,12 @@ import logging
 import subprocess
 from typing import Any, Callable, Dict, Optional
 
-from src.analyzer.claude import ClaudeAnalyzer
+from src.analyzer.claude import (
+    ClaudeAnalyzer,
+    ClaudeQuotaPause,
+    read_quota_pause,
+    write_quota_pause,
+)
 from src.config import BASE_DIR, config
 from src.notifier.telegram import TelegramNotifier
 from src.storage.db import Database
@@ -123,6 +128,15 @@ class SyncService:
             logger.warning("Analisi sospesa: motore %s non configurato", config.analyzer_engine)
             return False
 
+        pause = read_quota_pause()
+        if pause:
+            logger.warning(
+                "Pausa quota Claude fino a %s (%s). Nessuna richiesta, stati invariati.",
+                pause["resume_at"],
+                pause["reason"],
+            )
+            return can_analyze
+
         limit = getattr(self.analyzer, "max_per_cycle", None)
         started = 0
         label = f"Analisi con {config.analyzer_engine.capitalize()}"
@@ -137,6 +151,17 @@ class SyncService:
             t_id = item["tweet_id"]
             try:
                 res = self.analyzer.analyze_tweet(item)
+            except ClaudeQuotaPause as exc:
+                write_quota_pause(exc.resume_at, exc.reason)
+                self.db.update_analysis_failure(t_id, str(exc))
+                stats["analysis_errors"] = int(stats.get("analysis_errors") or 0) + 1
+                logger.warning(
+                    "Quota Claude (%s) fino a %s. Il post %s resta non analizzato, senza Telegram.",
+                    exc.reason,
+                    exc.resume_at.isoformat(),
+                    t_id,
+                )
+                break
             except Exception as exc:
                 self.db.update_analysis_failure(t_id, str(exc))
                 stats["analysis_errors"] = int(stats.get("analysis_errors") or 0) + 1
@@ -156,10 +181,14 @@ class SyncService:
             item["gemini_author"] = author
             item["gemini_title"] = title
             item["gemini_analysis_json"] = res
+            usage = getattr(self.analyzer, "last_usage", None)
+            if usage:
+                item["claude_usage"] = usage
 
             if config.export_markdown:
                 try:
-                    self.markdown_exporter.export_bookmark(item)
+                    export_item = {key: value for key, value in item.items() if key != "claude_usage"}
+                    self.markdown_exporter.export_bookmark(export_item)
                 except Exception as exc:
                     logger.warning("Export Markdown fallito per %s: %s", t_id, exc)
 

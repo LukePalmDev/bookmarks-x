@@ -63,12 +63,32 @@ class AppConfig:
         return os.environ.get("ANALYZER_ENGINE") or self._raw_config.get("engine", "claude")
 
     @property
-    def claude_model(self) -> str:
-        return os.environ.get("CLAUDE_MODEL") or self._raw_config.get("claude", {}).get("model", "haiku")
+    def analyzer_engine_source(self) -> str:
+        if os.environ.get("ANALYZER_ENGINE"):
+            return "env:ANALYZER_ENGINE"
+        return "config/config.yaml:engine"
 
     @property
-    def claude_fallback_model(self) -> str:
-        return self._raw_config.get("claude", {}).get("fallback_model", "sonnet")
+    def claude_model(self) -> str:
+        return os.environ.get("CLAUDE_MODEL") or self._raw_config.get("claude", {}).get("model", "claude-sonnet-5-5")
+
+    @property
+    def claude_model_source(self) -> str:
+        if os.environ.get("CLAUDE_MODEL"):
+            return "env:CLAUDE_MODEL"
+        return "config/config.yaml:claude.model"
+
+    @property
+    def claude_effort(self) -> str:
+        return os.environ.get("CLAUDE_EFFORT") or self._raw_config.get("claude", {}).get("effort", "high")
+
+    @property
+    def claude_weekly_reset_time(self) -> str:
+        return str(self._raw_config.get("claude", {}).get("weekly_reset_time", "06:00"))
+
+    @property
+    def claude_weekly_reset_tz(self) -> str:
+        return str(self._raw_config.get("claude", {}).get("weekly_reset_tz", "Europe/Rome"))
 
     # --- Ollama locale (opzionale; il default di produzione resta claude) ---
     @property

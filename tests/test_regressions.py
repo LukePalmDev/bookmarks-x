@@ -7,6 +7,7 @@
 
 import asyncio
 import json
+import os
 import subprocess
 import tempfile
 import unittest
@@ -198,11 +199,42 @@ class ServiceCase(unittest.TestCase):
         self.assertIn("Analizzati: 2", describe_watch_cycle(historical))
         self.assertIn("Nessun nuovo", describe_watch_cycle({"new_saved": 0, "analyzed": 0, "total_in_db": 3}))
 
+    def test_quota_pause_does_not_touch_the_other_rows(self):
+        from datetime import datetime, timedelta, timezone
+        from src.analyzer.claude import ClaudeQuotaPause
+
+        class QuotaAz(AnalyzerStub):
+            def analyze_tweet(self, item):
+                self.calls.append(item["tweet_id"])
+                raise ClaudeQuotaPause(
+                    "You've reached your weekly limit",
+                    resume_at=datetime.now(timezone.utc) + timedelta(hours=2),
+                    reason="weekly",
+                )
+
+        pause_path = Path(self.tmp.name) / "pause.json"
+        analyzer = QuotaAz()
+        notifier = NotifierStub()
+        svc, db = self.service([tweet("keep"), tweet("other")], analyzer, notifier)
+        with patch("src.analyzer.claude.quota_pause_file", lambda: pause_path):
+            asyncio.run(svc.run_sync())
+            first_calls = list(analyzer.calls)
+            asyncio.run(svc.run_sync())
+        self.assertEqual(first_calls, analyzer.calls)
+        self.assertEqual(len(first_calls), 1)
+        self.assertEqual(notifier.ids, [])
+        self.assertEqual(db.get_bookmark(first_calls[0])["status"], "failed_analysis")
+        other = "other" if first_calls[0] == "keep" else "keep"
+        self.assertEqual(db.get_bookmark(other)["status"], "pending_analysis")
+        self.assertTrue(pause_path.is_file())
+
     def test_default_engine_stays_claude(self):
         text = Path("config/config.yaml").read_text(encoding="utf-8")
         self.assertIn('engine: "claude"', text)
         self.assertIn("gemma4:12b-it-q4_K_M", text)
         self.assertEqual(config.analyzer_engine, "claude")
+        self.assertEqual(config.claude_model, "claude-sonnet-5-5")
+        self.assertEqual(config.claude_effort, "high")
         self.assertEqual(get_default_analyzer().__class__.__name__, "ClaudeAnalyzer")
         with patch.object(AppConfig, "analyzer_engine", new_callable=PropertyMock) as engine:
             engine.return_value = "ollama"
@@ -329,18 +361,20 @@ class ClaudeErrorCaptureTests(unittest.TestCase):
 
         with patch("src.analyzer.claude.subprocess.run", fake_run), patch("src.analyzer.claude.time.sleep"):
             with self.assertRaises(RuntimeError) as ctx:
-                ClaudeAnalyzer(model="haiku").analyze_tweet(
+                ClaudeAnalyzer(model="claude-sonnet-5-5", effort="high").analyze_tweet(
                     {"author_name": "N", "author_screen_name": "n", "tweet_text": "ciao"}
                 )
         message = str(ctx.exception)
         self.assertIn("schema exploded", message)
         self.assertIn("Claude CLI exit 1:", message)
-        self.assertEqual(len(captured), 3)
+        self.assertEqual(len(captured), 2)
         self.assertIs(captured[0][1]["stdin"], subprocess.DEVNULL)
-        self.assertIn("--fallback-model", captured[0][0])
-        self.assertNotIn("--fallback-model", captured[1][0])
-        self.assertEqual(captured[0][0][captured[0][0].index("--model") + 1], "haiku")
-        self.assertEqual(captured[1][0][captured[1][0].index("--model") + 1], "sonnet")
+        for command, kwargs in captured:
+            self.assertNotIn("--fallback-model", command)
+            self.assertEqual(command[command.index("--model") + 1], "claude-sonnet-5-5")
+            self.assertEqual(command[command.index("--effort") + 1], "high")
+            self.assertEqual(kwargs["env"]["CLAUDE_CODE_EFFORT_LEVEL"], "high")
+        self.assertNotEqual(os.environ.get("CLAUDE_CODE_EFFORT_LEVEL"), "high")
 
     def test_missing_binary_is_not_reported_as_exit_1(self):
         def fake_run(command, **kwargs):
@@ -348,8 +382,76 @@ class ClaudeErrorCaptureTests(unittest.TestCase):
 
         with patch("src.analyzer.claude.subprocess.run", fake_run), patch("src.analyzer.claude.time.sleep"):
             with self.assertRaises(RuntimeError) as ctx:
-                ClaudeAnalyzer(model="haiku").analyze_tweet({"tweet_text": "z", "author_name": "", "author_screen_name": ""})
+                ClaudeAnalyzer(model="claude-sonnet-5-5", effort="high").analyze_tweet({"tweet_text": "z", "author_name": "", "author_screen_name": ""})
         self.assertNotIn("Claude CLI exit 1", str(ctx.exception))
+
+    def test_parent_effort_env_does_not_override_the_child(self):
+        captured = []
+
+        class Proc:
+            returncode = 0
+            stderr = ""
+            stdout = json.dumps({
+                "structured_output": {"autore": "N (@n)", "titolo": "T", "categoria": "📰 News & Trend", "il_succo": "s", "punti_chiave": ["a"], "caso_d_uso": "c", "tag": ["#t"]},
+                "usage": {"input_tokens": 10, "output_tokens": 4, "cache_read_input_tokens": 2, "cache_creation_input_tokens": 1},
+                "total_cost_usd": 0.01,
+                "modelUsage": {"claude-sonnet-5-5": {}},
+                "duration_ms": 800,
+            })
+
+        def fake_run(command, **kwargs):
+            captured.append(kwargs["env"])
+            return Proc()
+
+        os.environ["CLAUDE_CODE_EFFORT_LEVEL"] = "low"
+        try:
+            with patch("src.analyzer.claude.subprocess.run", fake_run):
+                ClaudeAnalyzer(model="claude-sonnet-5-5", effort="high").analyze_tweet(
+                    {"author_name": "N", "author_screen_name": "n", "tweet_text": "ciao"}
+                )
+        finally:
+            os.environ.pop("CLAUDE_CODE_EFFORT_LEVEL", None)
+        self.assertEqual(captured[0]["CLAUDE_CODE_EFFORT_LEVEL"], "high")
+        self.assertNotIn("CLAUDE_CODE_EFFORT_LEVEL", os.environ)
+
+    def test_weekly_quota_is_not_retried(self):
+        calls = []
+
+        class Proc:
+            returncode = 1
+            stderr = ""
+            stdout = "You've reached your weekly limit. It resets Monday at 06:00."
+
+        def fake_run(command, **kwargs):
+            calls.append(command)
+            return Proc()
+
+        with patch("src.analyzer.claude.subprocess.run", fake_run), patch("src.analyzer.claude.time.sleep") as sleep:
+            with self.assertRaises(Exception) as ctx:
+                ClaudeAnalyzer(model="claude-sonnet-5-5", effort="high").analyze_tweet(
+                    {"author_name": "N", "author_screen_name": "n", "tweet_text": "ciao"}
+                )
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(sleep.call_count, 0)
+        self.assertTrue(ctx.exception.stop_cycle)
+        self.assertEqual(ctx.exception.reason, "weekly")
+
+    def test_usage_percent_is_not_invented(self):
+        from src.analyzer.claude import format_usage_footer, usage_from_cli_json
+        usage = usage_from_cli_json({
+            "usage": {"input_tokens": 12, "output_tokens": 5, "cache_read_input_tokens": 3, "cache_creation_input_tokens": 0},
+            "modelUsage": {"claude-sonnet-5-5": {"inputTokens": 12}},
+            "total_cost_usd": 0.02,
+        })
+        self.assertEqual(usage["input_tokens"], 12)
+        self.assertEqual(usage["output_tokens"], 5)
+        self.assertIsNone(usage["pro_5h_percent"])
+        self.assertIsNone(usage["weekly_percent"])
+        self.assertEqual(usage["percent_note"], "non disponibile")
+        footer = format_usage_footer(usage)
+        self.assertIn("non disponibile", footer)
+        self.assertNotIn("%", footer)
+        self.assertNotIn("0.02", footer)
 
 
 if __name__ == "__main__":

@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 import httpx
 
+from src.analyzer.claude import format_usage_footer
 from src.config import config
 
 logger = logging.getLogger("bookmarks_x_telegram")
@@ -143,7 +144,8 @@ class TelegramNotifier:
             f"{punti_str}\n"
             f"{caso_str}"
             f"{tags_str}\n\n"
-            f"🔗 <a href=\"{tweet_url}\">Apri il post su X</a>"
+            f"🔗 <a href=\"{tweet_url}\">Apri il post su X</a>\n"
+            f"<i>{html.escape(format_usage_footer(bookmark.get('claude_usage')))}</i>"
         )
 
         # Se sono presenti immagini e send_photos è attivo, invia con foto
