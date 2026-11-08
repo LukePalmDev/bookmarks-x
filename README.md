@@ -119,24 +119,61 @@ Non riavviare `com.user.x-gemini-bookmarks` solo per leggere queste note. Il pro
 
 ## Motore locale Ollama (opzionale)
 
-Il default resta **Claude** (`engine: "claude"`). Ollama non parte e non sostituisce Claude finché non imposti `engine: "ollama"`.
-
-Tag già presente sul Mac mini, Ollama 0.40.14, nessun download:
+Il default resta **Claude**. La chiave è `engine` in [`config/config.yaml`](config/config.yaml). Oggi è `engine: "claude"`. Il tag locale è nella stessa file, sotto `ollama.model`:
 
 `gemma4:12b-it-q4_K_M`
 
-È lo stesso modello del classificatore videogiochi di Trader. Quella accuracy non valida l'analisi dei bookmark. Trader e bookmarks condividono `127.0.0.1:11434`: questo client non cambia le impostazioni globali di Ollama, manda una richiesta alla volta e al massimo un post per ciclo. `num_ctx` è serrato a **4096** (contesto misurato sui 16GB; il massimo del modello, 262144, non va usato). `think: false` è supportato dall'API (`ThinkValue` booleano) e spegne il thinking, che su questo modello è acceso di default.
+Ollama 0.40.14 su `http://127.0.0.1:11434`. Nessun download e nessuna modifica alle impostazioni globali di Ollama. Trader usa lo stesso demone e lo stesso modello: non va fermato. Bookmarks manda una richiesta alla volta e, nel watch, al massimo un post per ciclo. `num_ctx` è serrato a **4096**. `num_predict` è serrato a **512**.
 
-`python main.py test` con `ANALYZER_ENGINE=ollama` interroga solo `GET /api/tags`. Non genera token.
+`think: false` è un booleano ammesso da `ThinkValue` nell'API `POST /api/chat`. Gemma 4 tiene il thinking acceso di default. Se il modello ignora il flag, i token di thinking rientrano nel tetto 512 e il JSON può uscire con `done_reason=length`: il post non viene marcato analizzato e Telegram non parte. Non alzare `num_ctx` né `num_predict` sui 16GB. Lo smoke stampa `thinking_emitted` proprio per vedere se il flag è stato rispettato. Una prova corta su questo modello (PromptX) è già passata in circa 8,7 secondi; lo smoke bookmarks è un JSON corto con gli stessi tetti. Il passaggio del backlog si fa solo sul mini.
 
-Prova sintetica, in un checkout separato, senza toccare il database di produzione e senza Telegram:
+### Conteggi, senza testi
+
+Legge `data/bookmarks.db` in sola lettura e stampa solo i numeri. Non mostra testi, errori o credenziali.
 
 ```bash
-TELEGRAM_ENABLED=false ANALYZER_ENGINE=ollama \
-  .venv/bin/python -c "from src.analyzer.ollama import OllamaAnalyzer; print(OllamaAnalyzer().test_connection())"
+.venv/bin/python main.py queue
 ```
 
-Una generazione di prova, solo quando Trader non sta inferendo, è un passo successivo e va fatto a mano. Non usare il database del servizio in esecuzione.
+```text
+analyzed=0
+pending_analysis=0
+failed_analysis=0
+other=0
+total=0
+```
+
+### Smoke sintetico, senza database
+
+Ignora `engine`. Una sola `POST /api/chat` su un testo fisso nel codice. Non apre SQLite, non scrive archivio, non chiama Telegram e non chiama X. Si può lanciare mentre il servizio acceso è ancora su Claude.
+
+```bash
+.venv/bin/python main.py ollama-smoke
+```
+
+Codici: `0` schema valido, `1` modello o URL non locali, `2` timeout o Ollama occupato, `3` JSON troncato o schema rifiutato. Se esce `2`, Trader sta usando la GPU: non c'è nulla da riavviare, si riprova più tardi.
+
+`main.py test` continua a non generare token.
+
+### Svuotare `failed_analysis` senza rinotificare gli `analyzed`
+
+Farlo solo dopo uno smoke con `exit=0`. Fino a quel momento non cambiare `engine` e non riavviare il servizio.
+
+1. `.venv/bin/python main.py queue` e annotare `analyzed` e `failed_analysis`.
+2. In `config/config.yaml` impostare `engine: "ollama"`. Lasciare `ollama.model`, `num_ctx: 4096` e `think: false` come sono.
+3. Riavvio supportato, ricarica `main.py watch` e non cancella il database:
+
+```bash
+.venv/bin/python install-service.py --restart
+```
+
+È `launchctl kickstart -k` su `com.user.x-gemini-bookmarks`. Non cambia Ollama.
+
+4. Il watch prende solo `pending_analysis` e `failed_analysis`, uno per ciclo. Gli `analyzed` non vengono riletti e non ricevono un secondo Telegram. Ogni failed che riesce riceve una sola scheda, la prima.
+5. `.venv/bin/python main.py queue` di nuovo. `failed_analysis` scende e `analyzed` sale dei soli successi. Il valore iniziale di `analyzed` non corrisponde a nuovi invii.
+6. Non usare `reanalyze` per questo svuotamento: percorrerebbe la coda tutta di seguito sulla stessa GPU di Trader.
+
+Non riavviare `com.user.x-gemini-bookmarks` solo per leggere queste note. Il processo già in memoria continua a usare il codice con cui è partito.
 
 ---
 

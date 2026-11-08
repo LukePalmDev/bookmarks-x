@@ -35,11 +35,31 @@ Niente markdown. Solo l'oggetto JSON."""
 
 
 class OllamaError(RuntimeError):
-    """Errore di analisi locale. ``stop_cycle`` ferma il batch senza altri invii."""
+    """Errore di analisi locale. ``stop_cycle`` ferma il batch senza altri invii.
 
-    def __init__(self, message: str, *, stop_cycle: bool = False):
+    ``kind`` è ``config`` (niente rete), ``runtime`` (timeout, coda, HTTP) o ``schema``.
+    """
+
+    def __init__(self, message: str, *, stop_cycle: bool = False, kind: str = "runtime"):
         super().__init__(message)
         self.stop_cycle = stop_cycle
+        self.kind = kind
+
+
+# Testo fisso, non letto dal database. Lo smoke fa una sola inferenza su questo.
+SYNTHETIC_TWEET = {
+    "author_name": "Smoke",
+    "author_screen_name": "smoke",
+    "tweet_text": (
+        "Prova sintetica locale: un segnalibro finto dice solo che un modello "
+        "sul computer può riassumere una nota breve."
+    ),
+}
+
+EXIT_OK = 0
+EXIT_CONFIG = 1
+EXIT_RUNTIME = 2
+EXIT_SCHEMA = 3
 
 
 class OllamaAnalyzer:
@@ -70,6 +90,7 @@ class OllamaAnalyzer:
         self.think = config.ollama_think if think is None else bool(think)
         self.temperature = config.ollama_temperature if temperature is None else float(temperature)
         self.max_per_cycle = config.ollama_max_per_cycle if max_per_cycle is None else max(1, int(max_per_cycle))
+        self.last_call: Dict[str, Any] = {}
 
     def _local_base(self) -> Optional[str]:
         parsed = urlparse(self.base_url or "")
@@ -173,7 +194,13 @@ class OllamaAnalyzer:
 
     def _parse_content(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         if payload.get("done_reason") == "length":
-            raise OllamaError("Risposta Ollama troncata (done_reason=length)", stop_cycle=False)
+            raise OllamaError(
+                "Risposta Ollama troncata (done_reason=length). "
+                "think:false è nello schema API ma se il modello pensa lo stesso "
+                "i token consumano num_predict (tetto 512) e il JSON si taglia.",
+                stop_cycle=False,
+                kind="schema",
+            )
         message = payload.get("message") or {}
         content = message.get("content")
         if isinstance(content, dict):
@@ -186,25 +213,29 @@ class OllamaAnalyzer:
             try:
                 parsed = json.loads(raw or "")
             except ValueError as exc:
-                raise OllamaError(f"JSON Ollama non valido: {raw[:200]}", stop_cycle=False) from exc
+                raise OllamaError(f"JSON Ollama non valido: {raw[:200]}", stop_cycle=False, kind="schema") from exc
         if not isinstance(parsed, dict):
-            raise OllamaError("Ollama non ha restituito un oggetto JSON", stop_cycle=False)
+            raise OllamaError("Ollama non ha restituito un oggetto JSON", stop_cycle=False, kind="schema")
         try:
             result = PostAnalysisResult(**parsed).model_dump()
         except Exception as exc:
-            raise OllamaError(f"Schema analisi rifiutato: {exc}", stop_cycle=False) from exc
+            raise OllamaError(f"Schema analisi rifiutato: {exc}", stop_cycle=False, kind="schema") from exc
         if result.get("categoria") not in CATEGORIES:
-            raise OllamaError(f"Categoria non ammessa: {result.get('categoria')}", stop_cycle=False)
+            raise OllamaError(
+                f"Categoria non ammessa: {result.get('categoria')}",
+                stop_cycle=False,
+                kind="schema",
+            )
         if not result.get("autore") or not result.get("titolo"):
-            raise OllamaError("Autore o titolo vuoti", stop_cycle=False)
+            raise OllamaError("Autore o titolo vuoti", stop_cycle=False, kind="schema")
         return result
 
     def _once(self, tweet_data: Dict[str, Any]) -> Dict[str, Any]:
         base = self._local_base()
         if not (self.model or "").strip():
-            raise OllamaError("Modello Ollama non configurato", stop_cycle=True)
+            raise OllamaError("Modello Ollama non configurato", stop_cycle=True, kind="config")
         if not base:
-            raise OllamaError(f"Ollama remoto rifiutato ({self.base_url})", stop_cycle=True)
+            raise OllamaError(f"Ollama remoto rifiutato ({self.base_url})", stop_cycle=True, kind="config")
         if not _PROCESS_FLIGHT.acquire(timeout=self.timeout):
             raise OllamaError(
                 "Inferenza locale già in corso: richiesta abbandonata per non sovraccaricare Ollama",
@@ -212,6 +243,15 @@ class OllamaAnalyzer:
             )
         try:
             body = self._request_body(tweet_data)
+            self.last_call = {
+                "model": body["model"],
+                "think": body["think"],
+                "num_ctx": body["options"]["num_ctx"],
+                "num_predict": body["options"]["num_predict"],
+                "done_reason": "",
+                "thinking_emitted": False,
+                "eval_count": None,
+            }
             timeout = httpx.Timeout(connect=5.0, read=self.timeout, write=30.0, pool=5.0)
             try:
                 with httpx.Client(timeout=timeout) as client:
@@ -227,6 +267,11 @@ class OllamaAnalyzer:
                 payload = res.json()
             except ValueError as exc:
                 raise OllamaError(f"Corpo Ollama non JSON: {res.text[:200]}", stop_cycle=True) from exc
+            message = payload.get("message") or {}
+            thinking = message.get("thinking")
+            self.last_call["done_reason"] = payload.get("done_reason") or ""
+            self.last_call["thinking_emitted"] = bool(isinstance(thinking, str) and thinking.strip())
+            self.last_call["eval_count"] = payload.get("eval_count")
             return self._parse_content(payload)
         finally:
             _PROCESS_FLIGHT.release()
@@ -244,3 +289,58 @@ class OllamaAnalyzer:
                     raise
                 time.sleep(min(2 * attempt, 5))
         raise OllamaError(f"Analisi Ollama fallita: {last}", stop_cycle=True)
+
+    def synthetic_smoke(self) -> Dict[str, Any]:
+        """Una sola inferenza sul testo fisso. Non apre SQLite, Telegram o X."""
+        report: Dict[str, Any] = {
+            "exit_code": EXIT_CONFIG,
+            "model": self.model,
+            "think": bool(self.think),
+            "num_ctx": None,
+            "num_predict": None,
+            "done_reason": "",
+            "thinking_emitted": False,
+            "eval_count": None,
+            "schema_ok": False,
+            "detail": "",
+        }
+        if not self.is_configured():
+            report["detail"] = "Ollama non configurato o URL non locale"
+            return report
+        try:
+            self._once(SYNTHETIC_TWEET)
+        except OllamaError as exc:
+            report.update(self.last_call)
+            report["schema_ok"] = False
+            report["detail"] = str(exc)
+            kind = getattr(exc, "kind", "runtime")
+            report["exit_code"] = {"config": EXIT_CONFIG, "schema": EXIT_SCHEMA}.get(kind, EXIT_RUNTIME)
+            return report
+        report.update(self.last_call)
+        report["schema_ok"] = True
+        report["exit_code"] = EXIT_OK
+        report["detail"] = "schema valido"
+        return report
+
+
+def format_smoke_report(report: Dict[str, Any]) -> str:
+    """Righe stabili, senza testo del segnalibro e senza il thinking del modello."""
+    detail = (report.get("detail") or "").replace("\n", " ")[:300]
+    eval_count = report.get("eval_count")
+    lines = [
+        f"exit={report.get('exit_code')}",
+        f"model={report.get('model') or ''}",
+        f"think={str(bool(report.get('think'))).lower()}",
+        f"num_ctx={report.get('num_ctx') if report.get('num_ctx') is not None else ''}",
+        f"num_predict={report.get('num_predict') if report.get('num_predict') is not None else ''}",
+        f"done_reason={report.get('done_reason') or ''}",
+        f"thinking_emitted={str(bool(report.get('thinking_emitted'))).lower()}",
+        f"eval_count={'' if eval_count is None else eval_count}",
+        f"schema_ok={str(bool(report.get('schema_ok'))).lower()}",
+        f"detail={detail}",
+    ]
+    if report.get("thinking_emitted"):
+        lines.append(
+            "warning=think:false non rispettato; num_predict 512 può troncare il JSON dei post veri"
+        )
+    return "\n".join(lines)

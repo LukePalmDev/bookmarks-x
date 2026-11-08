@@ -12,11 +12,16 @@ import httpx
 _dumps = json.dumps
 
 from src.analyzer.ollama import (
+    EXIT_CONFIG,
+    EXIT_OK,
+    EXIT_RUNTIME,
+    EXIT_SCHEMA,
     NUM_CTX_CEILING,
     VERIFIED_MODEL_TAG,
     OllamaAnalyzer,
     OllamaError,
     _PROCESS_FLIGHT,
+    format_smoke_report,
 )
 from src.config import AppConfig
 from src.service.sync_service import SyncService
@@ -75,6 +80,20 @@ class FakeClient:
             return FakeResp(200, {"message": {"content": "non proprio json"}, "done": True, "done_reason": "stop"})
         if mode == "length_then_ok" and len(FakeClient.posts) == 1:
             return FakeResp(200, {"message": {"content": "{"}, "done": True, "done_reason": "length"})
+        if mode == "think":
+            return FakeResp(
+                200,
+                {
+                    "message": {
+                        "role": "assistant",
+                        "content": _dumps(OK, ensure_ascii=False),
+                        "thinking": "SEGRETO_THINKING_NON_STAMPARE",
+                    },
+                    "done": True,
+                    "done_reason": "stop",
+                    "eval_count": 400,
+                },
+            )
         return FakeResp(
             200,
             {"message": {"role": "assistant", "content": _dumps(OK, ensure_ascii=False)}, "done": True, "done_reason": "stop"},
@@ -210,6 +229,76 @@ class OllamaClientTests(unittest.TestCase):
     def test_think_flag_is_configurable(self):
         analyzer(think=True).analyze_tweet({"tweet_text": "x", "author_name": "N", "author_screen_name": "n"})
         self.assertIs(FakeClient.posts[-1]["json"]["think"], True)
+
+    def test_synthetic_smoke_is_one_schema_call_without_sqlite_or_telegram(self):
+        import sqlite3
+
+        connects = []
+        real_connect = sqlite3.connect
+
+        def spy_connect(*args, **kwargs):
+            connects.append(args)
+            return real_connect(*args, **kwargs)
+
+        with patch("sqlite3.connect", spy_connect), \
+                patch("src.storage.db.Database", side_effect=AssertionError("db")), \
+                patch("src.notifier.telegram.TelegramNotifier", side_effect=AssertionError("tg")), \
+                patch("src.x_client.client.XBookmarksClient", side_effect=AssertionError("x")):
+            report = analyzer().synthetic_smoke()
+        self.assertEqual(connects, [])
+        self.assertEqual(report["exit_code"], EXIT_OK)
+        self.assertTrue(report["schema_ok"])
+        self.assertEqual(report["num_ctx"], 4096)
+        self.assertEqual(report["num_predict"], 512)
+        self.assertIs(report["think"], False)
+        self.assertFalse(report["thinking_emitted"])
+        self.assertEqual(len(FakeClient.posts), 1)
+        self.assertEqual(FakeClient.posts[0]["json"]["model"], VERIFIED_MODEL_TAG)
+        self.assertIs(FakeClient.posts[0]["json"]["stream"], False)
+        text = format_smoke_report(report)
+        self.assertIn("exit=0", text)
+        self.assertIn("schema_ok=true", text)
+        self.assertNotIn("Prova sintetica", text)
+        from src.cli.app import cmd_ollama_smoke
+        printed = []
+        with patch("src.cli.app.console.print", side_effect=printed.append):
+            self.assertEqual(cmd_ollama_smoke(), 0)
+        self.assertEqual(len(FakeClient.posts), 2)
+
+    def test_synthetic_smoke_timeout_and_schema_are_single_calls(self):
+        FakeClient.mode = "timeout"
+        report = analyzer(max_attempts=3).synthetic_smoke()
+        self.assertEqual(report["exit_code"], EXIT_RUNTIME)
+        self.assertEqual(len(FakeClient.posts), 1)
+        self.assertEqual(report["num_ctx"], 4096)
+
+        FakeClient.posts.clear()
+        FakeClient.mode = "bad"
+        report = analyzer(max_attempts=3).synthetic_smoke()
+        self.assertEqual(report["exit_code"], EXIT_SCHEMA)
+        self.assertEqual(len(FakeClient.posts), 1)
+
+        FakeClient.posts.clear()
+        FakeClient.mode = "length_then_ok"
+        report = analyzer(max_attempts=3).synthetic_smoke()
+        self.assertEqual(report["exit_code"], EXIT_SCHEMA)
+        self.assertEqual(report["done_reason"], "length")
+        self.assertIn("done_reason=length", format_smoke_report(report))
+        self.assertEqual(len(FakeClient.posts), 1)
+
+    def test_synthetic_smoke_reports_ignored_think_flag_without_the_trace(self):
+        FakeClient.mode = "think"
+        report = analyzer().synthetic_smoke()
+        self.assertEqual(report["exit_code"], EXIT_OK)
+        self.assertTrue(report["thinking_emitted"])
+        text = format_smoke_report(report)
+        self.assertIn("warning=think:false", text)
+        self.assertNotIn("SEGRETO_THINKING", text)
+
+    def test_synthetic_smoke_refuses_remote_without_http(self):
+        report = analyzer(base_url="https://example.com").synthetic_smoke()
+        self.assertEqual(report["exit_code"], EXIT_CONFIG)
+        self.assertEqual(FakeClient.posts, [])
 
 
 class OllamaServiceTests(unittest.TestCase):
