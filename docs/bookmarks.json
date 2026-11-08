@@ -1,19 +1,29 @@
 [
   {
     "id": "2118774820293034437",
-    "title": "Introducing Lattice, a local LaTeX workspace for your resear",
+    "title": "Lattice: un workspace locale completo per la ricerca e la scrittura in LaTeX",
     "author": "Leonardo (@leoliuym)",
     "screen_name": "leoliuym",
-    "category": "📌 Risorsa X",
-    "summary": "Introducing Lattice, a local LaTeX workspace for your research.\n\nA paper is more than a .tex file: the papers you cite, notes, slides, Overleaf co-authors and now an AI agent.\n\nI w",
-    "points": [],
-    "use_case": "",
-    "tags": [],
+    "category": "🛠️ Strumenti & App",
+    "summary": "Lattice è un'applicazione open source che unifica file .tex, citazioni, note, slide e un agente AI in un unico ambiente di lavoro locale.",
+    "points": [
+      "Integrazione di file LaTeX, note e slide in un'unica interfaccia",
+      "Supporto per co-autori su Overleaf",
+      "Inclusione di un agente AI dedicato alla ricerca",
+      "Software gratuito e open source"
+    ],
+    "use_case": "Gestire l'intero flusso di lavoro di una ricerca accademica in un unico ambiente locale integrato.",
+    "tags": [
+      "#latex",
+      "#research",
+      "#opensource",
+      "#productivity"
+    ],
     "url": "https://x.com/leoliuym/status/2118774820293034437",
     "date": "6 Nov 2026",
     "timestamp": 1793990256,
     "text": "Introducing Lattice, a local LaTeX workspace for your research.\n\nA paper is more than a .tex file: the papers you cite, notes, slides, Overleaf co-authors and now an AI agent.\n\nI wanted it all in one app, so I built it.\n\nFree to download, open source:\nhttps://t.co/hnoC9AQ84m https://t.co/zNB1Ha3qfR",
-    "status": "failed_analysis"
+    "status": "analyzed"
   },
   {
     "id": "2118754230198468976",
