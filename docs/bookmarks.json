@@ -1,5 +1,32 @@
 [
   {
+    "id": "2119399547701014962",
+    "title": "Guida completa a Claude: 6 livelli per usarlo bene e risparmiare token",
+    "author": "Ruben Hassid (@rubenhassid)",
+    "screen_name": "rubenhassid",
+    "category": "💡 Prompt & Guide",
+    "summary": "Una checklist pratica per configurare e usare Claude in modo efficiente: app desktop, modello e livello di effort di default, pulizia delle vecchie istruzioni e skill, output in HTML e attenzione alla privacy. L'idea di fondo è semplificare: meno impostazioni, un solo obiettivo per prompt e strumenti aggiornati ai modelli recenti.",
+    "points": [
+      "Usare l'app desktop di Claude permette di lavorare direttamente con le cartelle senza caricare i file uno a uno e favorisce l'uso di Claude Code.",
+      "Impostare un modello di default (Opus 5.5 con effort High, Medium per lavori leggeri) ed evitare di cambiare modello a metà chat, perché Claude rilegge tutta la conversazione consumando più token; Extra High esaurisce rapidamente i limiti.",
+      "Eliminare le vecchie 'Instructions for Claude' e le skill scritte per modelli precedenti; dare un solo obiettivo e chiudere il prompt con 'Prima di iniziare, riformula il mio obiettivo con parole tue'.",
+      "Chiedere output come pagina HTML indicando il destinatario ('per [chi leggerà]'); evitare pollice su/giù (feedback usabile per il training) e, su piano Team, non disattivare la memoria perché cancella in modo permanente quelle dei membri."
+    ],
+    "use_case": "Utile a chi usa Claude ogni giorno e vuole una configurazione iniziale rapida (circa 20 minuti) per lavorare meglio, consumare meno token e proteggere i propri dati.",
+    "tags": [
+      "#claude",
+      "#prompting",
+      "#claudecode",
+      "#produttività",
+      "#token"
+    ],
+    "url": "https://x.com/rubenhassid/status/2119399547701014962",
+    "date": "8 Nov 2026",
+    "timestamp": 1794139203,
+    "text": "Nobody has ever explained all of Claude to you.\n\nBut here's everything about Claude you must know:\n\nLevel 1. Don't be lazy, use the Claude desktop app.\n\nYou will still use the browser 90% of the time, and that's fine. But the day you start using the Claude desktop app, you'd be able to work with your folders without ever uploading the files one by one. You'd use Claude code more. There is no coming back from there.\n\nLevel 2. You have better things to do than spending 1 minute choosing the best model.\n\nDefault should be: Opus 5.5 on high. That's it.\n\nDo not switch the models mid-chat. It consumes more tokens because Claude re-reads the entire chat (again) to get the context.\n\nLevel 3. Either Medium or High effort. Nothing else\n\nMedium when it is low-effort work. High for most of the tasks. But Extra High mostly burn through your usage limit.\n\nLevel 4. Delete your old Claude setup.\n\nDelete the “Instructions for Claude” box in settings. Delete the old added Claude skills. Old skills and prompts might be slowing you down since they were written for old models. Instead, give one goal and end prompts with: “Before you start, restate my goal in your own words.”\n\nLevel 5. Ask for HTML. Not for a document.\n\nAdd two things to your prompt: “Make it an HTML page” and “for [who will read it].”\n\nClaude will code the image, doc, or any other format. There is no scope of making mistakes.\n\nLevel 6. Protect what you plug in.\n\nNever click the thumbs up or down under an answer. You are basically giving feedback to AI, and they are allowed to send it to their training data. On a Team plan, once memory is on, leave it on: if an owner turns it off, every member’s memories are deleted permanently.\n\nYour first 20 minutes, in order:\n\n1. Install desktop app.\n2. No settings are the best.\n3. Connect ONE tool - not everything.\n4. Use Claude Code more than you do.\n5. Delete the installed skills, and add the new ones (written for the latest models)\n6. Go to https://t.co/cn6xDN1uAS for my Claude skill library.",
+    "status": "analyzed"
+  },
+  {
     "id": "2118774820293034437",
     "title": "Lattice: un workspace locale completo per la ricerca e la scrittura in LaTeX",
     "author": "Leonardo (@leoliuym)",
