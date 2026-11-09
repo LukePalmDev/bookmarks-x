@@ -12,6 +12,83 @@ from src.config import config
 
 logger = logging.getLogger("bookmarks_x_telegram")
 
+# Telegram conta i caratteri in unità UTF-16. Caption foto 1024, testo 4096.
+PHOTO_CAPTION_LIMIT = 1024
+MESSAGE_LIMIT = 4096
+
+
+def telegram_len(text: str) -> int:
+    return len(text.encode("utf-16-le")) // 2
+
+
+def _cut_is_safe(text: str, cut: int) -> bool:
+    """Il taglio non cade dentro un tag HTML né dentro un'entità &...;."""
+    if cut <= 0 or cut > len(text):
+        return False
+    in_tag = False
+    i = 0
+    while i < cut:
+        ch = text[i]
+        if in_tag:
+            if ch == ">":
+                in_tag = False
+            i += 1
+            continue
+        if ch == "<":
+            in_tag = True
+            i += 1
+            continue
+        if ch == "&":
+            end = text.find(";", i + 1)
+            if end == -1 or end >= cut:
+                return False
+            i = end + 1
+            continue
+        i += 1
+    return not in_tag
+
+
+def split_html_message(text: str, limit: int = MESSAGE_LIMIT) -> list[str]:
+    """Spezza solo oltre il limite, su un confine che non rompe HTML."""
+    if telegram_len(text) <= limit:
+        return [text] if text else []
+    parts: list[str] = []
+    rest = text
+    while rest:
+        if telegram_len(rest) <= limit:
+            parts.append(rest)
+            break
+        # Finestra in caratteri Python, poi si restringe finché le unità UTF-16 stanno nel limite.
+        window_end = min(len(rest), limit)
+        while window_end > 0 and telegram_len(rest[:window_end]) > limit:
+            window_end -= 1
+        split_at = None
+        for i in range(window_end, 0, -1):
+            if rest[i - 1] == "\n" and _cut_is_safe(rest, i):
+                split_at = i
+                break
+        if split_at is None:
+            for i in range(window_end, 0, -1):
+                if _cut_is_safe(rest, i):
+                    split_at = i
+                    break
+        if not split_at:
+            split_at = max(1, window_end)
+        parts.append(rest[:split_at])
+        rest = rest[split_at:]
+    return parts
+
+
+def short_photo_caption(title: str) -> str:
+    """Didascalia corta, distinta dalla scheda. Il titolo si accorcia prima dell'escape."""
+    plain = (title or "Segnalibro").strip().replace("\n", " ")
+    if len(plain) > 180:
+        plain = plain[:177].rstrip() + "…"
+    return (
+        f"🔖 <b>{html.escape(plain)}</b>\n"
+        "<i>Scheda completa nel messaggio sotto.</i>"
+    )
+
 
 class TelegramNotifier:
     """Invia notifiche eleganti e formattate su Telegram per ogni nuovo post salvato e analizzato."""
@@ -49,59 +126,57 @@ class TelegramNotifier:
         if not self.is_configured():
             return False
 
+        parts = split_html_message(text)
+        if not parts:
+            return False
         url = f"{self.base_url}/sendMessage"
-        payload = {
-            "chat_id": self.chat_id,
-            "text": text,
-            "parse_mode": "HTML",
-            "disable_web_page_preview": disable_preview,
-        }
-
-        try:
-            with httpx.Client(timeout=15.0) as client:
-                res = client.post(url, json=payload)
-                if res.status_code == 200:
-                    return True
-                logger.error(f"Telegram sendMessage failed: {res.status_code} - {res.text}")
-        except Exception as e:
-            logger.error(f"Errore invio messaggio Telegram: {e}")
-        return False
+        ok = True
+        for part in parts:
+            payload = {
+                "chat_id": self.chat_id,
+                "text": part,
+                "parse_mode": "HTML",
+                "disable_web_page_preview": disable_preview,
+            }
+            try:
+                with httpx.Client(timeout=15.0) as client:
+                    res = client.post(url, json=payload)
+                    if res.status_code == 200:
+                        continue
+                    logger.error(f"Telegram sendMessage failed: {res.status_code} - {res.text}")
+            except Exception as e:
+                logger.error(f"Errore invio messaggio Telegram: {e}")
+            ok = False
+            break
+        return ok
 
     def send_photo(self, photo_path: Path, caption: str) -> bool:
+        """Invia solo la foto. La didascalia deve essere già corta: non si taglia l'HTML."""
         if not self.is_configured() or not photo_path.exists():
             return False
+        if telegram_len(caption) > PHOTO_CAPTION_LIMIT:
+            logger.warning("Didascalia foto oltre il limite: non la taglio, invio senza testo.")
+            caption = ""
 
         url = f"{self.base_url}/sendPhoto"
-        # Telegram supporta fino a 1024 caratteri nelle didascalie delle foto
-        if len(caption) > 1020:
-            short_caption = caption[:1015] + "..."
-        else:
-            short_caption = caption
-
         try:
             with open(photo_path, "rb") as f:
                 files = {"photo": (photo_path.name, f, "image/jpeg")}
                 data = {
                     "chat_id": self.chat_id,
-                    "caption": short_caption,
+                    "caption": caption,
                     "parse_mode": "HTML",
                 }
                 with httpx.Client(timeout=30.0) as client:
                     res = client.post(url, data=data, files=files)
                     if res.status_code == 200:
-                        # Una sola consegna. La didascalia è già troncata al limite Telegram:
-                        # un secondo sendMessage con lo stesso testo è il doppio invio immediato.
                         return True
                     logger.warning(f"Telegram sendPhoto failed: {res.status_code} - {res.text}")
         except httpx.TransportError as e:
-            # Timeout o connessione interrotta: la foto può essere già stata accettata.
-            logger.warning(f"Telegram sendPhoto incerto, nessun secondo invio: {e}")
-            return False
+            logger.warning(f"Telegram sendPhoto incerto: {e}")
         except Exception as e:
             logger.warning(f"Errore invio foto Telegram: {e}")
-
-        # La foto è stata rifiutata in modo esplicito, oppure il file non era leggibile.
-        return self.send_message(caption)
+        return False
 
     def notify_bookmark(self, bookmark: Dict[str, Any]) -> bool:
         """Costruisce e recapita la notifica strutturata per un post analizzato con Claude."""
@@ -161,6 +236,7 @@ class TelegramNotifier:
             for p in media_paths:
                 path_obj = Path(p)
                 if path_obj.exists() and path_obj.stat().st_size > 0:
-                    return self.send_photo(path_obj, message)
+                    self.send_photo(path_obj, short_photo_caption(title))
+                    break
 
         return self.send_message(message)

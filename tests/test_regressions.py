@@ -263,7 +263,7 @@ class TelegramDedupTests(unittest.TestCase):
             def post(self, url, json=None, data=None, files=None):
                 kind = "photo" if files is not None else "message"
                 text = (data or {}).get("caption") if files is not None else (json or {}).get("text")
-                outer.calls.append(kind if kind == "photo" else text)
+                outer.calls.append((kind, text))
                 if kind == "photo" and outer.behavior == "timeout":
                     raise httpx.ReadTimeout("read timed out")
                 code = 500 if kind == "photo" and outer.behavior == "http500" else 200
@@ -303,29 +303,61 @@ class TelegramDedupTests(unittest.TestCase):
             item["media_local_paths"] = json.dumps([str(self.image)])
         return item
 
-    def test_long_photo_caption_is_not_sent_twice(self):
-        ok = self.notifier.notify_bookmark(self.bookmark("X" * 1500))
+    def test_long_card_keeps_the_text_and_a_short_photo_caption(self):
+        from src.notifier.telegram import telegram_len
+        point = "Eliminare le vecchie & skill residue"
+        ok = self.notifier.notify_bookmark(self.bookmark(point + " " + ("dettaglio " * 80)))
         self.assertTrue(ok)
-        self.assertEqual(self.calls, ["photo"])
+        self.assertEqual([kind for kind, _text in self.calls][0], "photo")
+        caption = self.calls[0][1]
+        messages = [text for kind, text in self.calls if kind == "message"]
+        self.assertEqual(len(messages), 1)
+        self.assertIn("Eliminare le vecchie &amp; skill", messages[0])
+        self.assertNotIn("Eliminare le vecchie", caption)
+        self.assertIn("Scheda completa nel messaggio sotto.", caption)
+        self.assertNotIn("...", caption)
+        self.assertLessEqual(telegram_len(caption), 1024)
+        self.assertNotEqual(caption, messages[0])
+        self.assertEqual(messages.count(messages[0]), 1)
 
     def test_text_only_is_a_single_message(self):
         ok = self.notifier.notify_bookmark(self.bookmark("X" * 1500, with_photo=False))
         self.assertTrue(ok)
         self.assertEqual(len(self.calls), 1)
-        self.assertNotEqual(self.calls[0], "photo")
+        self.assertEqual(self.calls[0][0], "message")
+        self.assertIn("X" * 1500, self.calls[0][1])
 
-    def test_photo_timeout_does_not_fall_back_to_text(self):
+    def test_photo_timeout_still_sends_the_card_once(self):
         self.behavior = "timeout"
-        ok = self.notifier.notify_bookmark(self.bookmark("breve"))
-        self.assertFalse(ok)
-        self.assertEqual(self.calls, ["photo"])
+        ok = self.notifier.notify_bookmark(self.bookmark("breve & chiaro"))
+        self.assertTrue(ok)
+        self.assertEqual([kind for kind, _text in self.calls], ["photo", "message"])
+        self.assertIn("breve &amp; chiaro", self.calls[1][1])
+        self.assertNotEqual(self.calls[0][1], self.calls[1][1])
 
-    def test_rejected_photo_falls_back_once(self):
+    def test_rejected_photo_sends_the_card_once(self):
         self.behavior = "http500"
         ok = self.notifier.notify_bookmark(self.bookmark("breve"))
         self.assertTrue(ok)
-        self.assertEqual(self.calls[0], "photo")
-        self.assertEqual(len(self.calls), 2)
+        self.assertEqual([kind for kind, _text in self.calls], ["photo", "message"])
+        self.assertIn("breve", self.calls[1][1])
+
+    def test_message_over_4096_splits_without_cutting_entities(self):
+        from src.notifier.telegram import split_html_message, telegram_len
+        body = ("parola " * 700) + " vecchie &amp; skill " + ("ancora " * 200)
+        parts = split_html_message(body)
+        self.assertGreater(len(parts), 1)
+        self.assertEqual("".join(parts), body)
+        for part in parts:
+            self.assertLessEqual(telegram_len(part), 4096)
+            self.assertIsNone(__import__("re").search(r"&[^;\s]*$", part))
+            self.assertNotIn("&amp", part.replace("&amp;", ""))
+        ok = self.notifier.notify_bookmark(self.bookmark("Z" * 5000, with_photo=False))
+        self.assertTrue(ok)
+        messages = [text for kind, text in self.calls if kind == "message"]
+        self.assertGreater(len(messages), 1)
+        self.assertEqual("".join(messages).count("Z" * 5000), 1)
+        self.assertTrue(all(telegram_len(text) <= 4096 for text in messages))
 
 
 class ClaudeErrorCaptureTests(unittest.TestCase):
