@@ -1,5 +1,32 @@
 [
   {
+    "id": "2120279511707386263",
+    "title": "Grok Bot ora può unirsi a una tailnet Tailscale per accedere a risorse private",
+    "author": "Grok Bot (@bot)",
+    "screen_name": "bot",
+    "category": "📰 News & Trend",
+    "summary": "Grok Bot supporta ora l'ingresso in tailnet Tailscale, personali o aziendali, così da raggiungere in modo sicuro server MCP privati, strumenti interni e app presenti sulla rete privata. L'annuncio è breve e non entra nei dettagli tecnici di configurazione.",
+    "points": [
+      "Integrazione con Tailscale: il bot può entrare in tailnet sia personali sia aziendali",
+      "Accesso sicuro a server MCP privati non esposti su Internet pubblico",
+      "Raggiungibilità di strumenti interni e app sulla rete privata",
+      "Estende l'uso di un agente AI oltre i servizi cloud pubblici, verso risorse on-premise o riservate"
+    ],
+    "use_case": "Utile a chi vuole far lavorare un assistente AI con server MCP e servizi interni senza esporli pubblicamente, ad esempio in contesti aziendali o home lab con rete privata Tailscale.",
+    "tags": [
+      "#grok",
+      "#tailscale",
+      "#mcp",
+      "#agenti",
+      "#sicurezza"
+    ],
+    "url": "https://x.com/bot/status/2120279511707386263",
+    "date": "10 Nov 2026",
+    "timestamp": 1794349003,
+    "text": "Grok Bot can now join your personal or company tailnets on Tailscale.\n\nUse it to securely reach private MCP servers, internal tools, and apps on your network. https://t.co/kIZjEmvSMK",
+    "status": "analyzed"
+  },
+  {
     "id": "2119399547701014962",
     "title": "Guida completa a Claude: 6 livelli per usarlo bene e risparmiare token",
     "author": "Ruben Hassid (@rubenhassid)",
