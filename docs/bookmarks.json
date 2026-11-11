@@ -1,5 +1,32 @@
 [
   {
+    "id": "2120376056318496910",
+    "title": "3D Gaussian Splatting funziona su un vecchio iPod Nano, senza GPU potente",
+    "author": "Jonathan Stephens (@jonstephens85)",
+    "screen_name": "jonstephens85",
+    "category": "🔬 Modelli & Ricerca",
+    "summary": "Un utente di Reddit è riuscito a eseguire il rendering 3D Gaussian Splatting (3DGS) su un vecchio iPod Nano, hardware estremamente limitato. Fino a pochi anni fa questa tecnica richiedeva una GPU di fascia alta.",
+    "points": [
+      "Il 3DGS è una tecnica di rendering di scene 3D basata su gaussiane, nata con requisiti GPU elevati",
+      "Il porting su un iPod Nano mostra quanto le implementazioni siano diventate leggere ed efficienti",
+      "Segnale che il rendering neurale/splatting può girare su dispositivi embedded e a bassissima potenza",
+      "Il progetto è emerso dalla community Reddit come dimostrazione sperimentale (post con video/link allegato)"
+    ],
+    "use_case": "Utile per chi lavora con grafica 3D, realtà aumentata o dispositivi embedded e vuole capire che il Gaussian Splatting è ormai portabile su hardware molto limitato, aprendo scenari di visualizzazione 3D su device a basso costo.",
+    "tags": [
+      "#3dgs",
+      "#gaussiansplatting",
+      "#embedded",
+      "#rendering3d",
+      "#ottimizzazione"
+    ],
+    "url": "https://x.com/jonstephens85/status/2120376056318496910",
+    "date": "11 Nov 2026",
+    "timestamp": 1794372021,
+    "text": "Aw snap!!! Someone on Reddit put 3DGS on an old iPod Nano. This blows my mind. Just a couple years ago this required high end GPU. https://t.co/OULtMUH3ns",
+    "status": "analyzed"
+  },
+  {
     "id": "2120279511707386263",
     "title": "Grok Bot ora può unirsi a una tailnet Tailscale per accedere a risorse private",
     "author": "Grok Bot (@bot)",
