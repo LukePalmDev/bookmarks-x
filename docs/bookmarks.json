@@ -1,5 +1,32 @@
 [
   {
+    "id": "2120552706423366073",
+    "title": "L'economia B2A: le aziende devono ora conquistare gli agenti AI come nuovi clienti",
+    "author": "Justine Moore (@venturetwins)",
+    "screen_name": "venturetwins",
+    "category": "📰 News & Trend",
+    "summary": "Dopo anni passati a bloccare i bot, le aziende dovranno invece competere per essere scelte dagli agenti AI, che già generano la maggior parte del traffico web e del codice in produzione. Secondo gli autori, presto saranno anche i principali acquirenti online, dando origine a un'economia \"business-to-agent\" (B2A).",
+    "points": [
+      "Cambio di paradigma: da 'combattere i bot' a 'conquistare gli agenti' come clienti.",
+      "Gli agenti AI rappresentano già la maggioranza del traffico web.",
+      "La maggior parte del codice messo in produzione è generata da agenti AI.",
+      "Previsione: a breve gli agenti compreranno la maggior parte di ciò che viene venduto online, aprendo il modello B2A."
+    ],
+    "use_case": "Utile a founder, product manager e marketer che devono ripensare sito, API e canali di vendita perché siano leggibili e scelti da agenti AI oltre che da persone.",
+    "tags": [
+      "#b2a",
+      "#agenti",
+      "#ecommerce",
+      "#trend",
+      "#ai"
+    ],
+    "url": "https://x.com/venturetwins/status/2120552706423366073",
+    "date": "11 Nov 2026",
+    "timestamp": 1794414137,
+    "text": "Companies spent years battling bots. Now they’re fighting for their business.\n\nAI agents are the majority of Web traffic and generate most code pushed to production. Soon, they'll be buying most of what gets sold online.\n\nNew piece with @omooretweets on the B2A economy 👇 https://t.co/AGkbjLrD95",
+    "status": "analyzed"
+  },
+  {
     "id": "2120376056318496910",
     "title": "3D Gaussian Splatting funziona su un vecchio iPod Nano, senza GPU potente",
     "author": "Jonathan Stephens (@jonstephens85)",
