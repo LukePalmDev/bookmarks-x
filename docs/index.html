@@ -4,6 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Bookmarks-X</title>
+  <meta name="description" content="Archivio pubblico dei segnalibri salvati su X, con titolo, autore, categoria e sintesi.">
+  <meta property="og:title" content="Bookmarks-X">
+  <meta property="og:description" content="Archivio pubblico dei segnalibri salvati su X, con titolo, autore, categoria e sintesi.">
+  <meta property="og:image" content="https://bookmarks.byluke.org/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Bookmarks-X, archivio pubblico dei segnalibri salvati su X.">
+  <meta property="og:url" content="https://bookmarks.byluke.org/">
+  <meta property="og:type" content="website">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Bookmarks-X">
@@ -97,8 +107,11 @@
     }
 
     .brand-title {
+      margin: 0;
+      font-family: inherit;
       font-size: 19px;
       font-weight: 700;
+      line-height: 1.2;
       color: #ffffff;
       letter-spacing: -0.02em;
     }
@@ -425,7 +438,7 @@
       <div class="header-top">
         <div class="brand">
           <span class="brand-icon" aria-hidden="true">🔖</span>
-          <span class="brand-title">Bookmarks-X</span>
+          <h1 class="brand-title">Bookmarks-X</h1>
         </div>
         <div class="header-actions">
           <button type="button" class="sort-btn" id="sortToggleBtn" title="Inverti ordine cronologico" aria-label="Ordina dal più recente">
